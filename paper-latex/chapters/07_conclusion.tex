@@ -1,0 +1,13 @@
+\chapter{Conclusion}\label{chapter:conclusion}
+
+\section{Overview}
+
+This thesis provides an optimized implementation on the OTBN instruction set of the Kroneker+ polynomial multiplication algorithm fine tuned for the Dilithium signature scheme. It tackles various challenges from the algorithm level (choice of NTT, modulo reduction algorithm) to the implementation level (parameter choice, optimizations, lack of needed instructions). The final result is a working and efficient code that can be easily plugged into the Dilithium scheme and expected to work out-of-the-box. At the same time it provides a reference implementation of the Kroneker+ algorithm which can serve as a starting point for the adoption of other schemes on the OTBN processor. Lastly, it details on various parts of the algorithm in order to facilitate understanding from both a theoretical point of view as well as an implementation oriented perspective. 
+
+\section{Future Work}
+
+There are a number of improvements that can be added to this implementation in order to make it more efficient. Reduction of the number of instructions in the last step would greatly reduce the running time since they are run many times. Stopping the propagation of burrows and carries when these are 0 in some modulo reduction operations is expected to reduce the number of ran instructions by a significant amount. Combining the implementation of steps that need to load, process and save back numbers to the data memory would reduce the number of i/o interactions which are by definition slow.
+
+One could adapt the code to other processors and instruction sets and understand which hardware capabilities are needed to make the implementation more efficient. Furthermore, the codebase used as a baseline and more implementations for other parameter sets can be developed with specific use cases, i.e. schemes in mind. 
+
+Lastly, from a more theoretical perspective, the algorithm can be formalized and the transformations studied in more depth. One could consider maps to a ring were a other convolutions show up, as it is the case with the negative wrapped convolution. Such a study might lead to more efficient steps, or even to a completely new algorithm.

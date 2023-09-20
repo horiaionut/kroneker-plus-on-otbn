@@ -1,0 +1,50 @@
+\babel@toc {american}{}\relax 
+\contentsline {chapter}{Acknowledgments}{iii}{Doc-Start}%
+\contentsline {chapter}{\nonumberline Abstract}{iv}{chapter*.1}%
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Motivation}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Previous work}{2}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Contribution}{4}{section.1.3}%
+\contentsline {chapter}{\numberline {2}Background}{6}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Notation}{6}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Dilithium Digital Signature Scheme}{6}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Kroneker substitution}{7}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Fourier Transformation}{8}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Discrete Fourier Transform}{9}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Cyclic Convolution-based Number Theoretic Transform}{10}{subsection.2.4.2}%
+\contentsline {subsubsection}{\nonumberline Point value representation}{11}{subsubsection*.6}%
+\contentsline {subsubsection}{\nonumberline Recursive Cooley-Tukey Butterfly}{13}{subsubsection*.8}%
+\contentsline {subsubsection}{\nonumberline Iterative Cooley-Tukey Butterfly}{14}{subsubsection*.10}%
+\contentsline {subsubsection}{\nonumberline Removing the bit-reversal step}{16}{subsubsection*.13}%
+\contentsline {subsection}{\numberline {2.4.3}Negative Wrapped Convolution-based NTT}{17}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}Gentlemen-Sande Butterfly}{19}{subsection.2.4.4}%
+\contentsline {section}{\numberline {2.5}OpenTitan Big Number Accelerator (OTBN)}{20}{section.2.5}%
+\contentsline {chapter}{\numberline {3}Nussbaumer Method}{22}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Kroneker+}{24}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Implementation}{26}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Parameter Choice}{26}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Representation and Basic Operations in the Polynomial Domain}{27}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Polynomial Representation}{28}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Modulo reduction by q}{28}{subsection.5.2.2}%
+\contentsline {section}{\numberline {5.3}Representation and Basic Operations in the Kronecker+ Domain}{30}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Polynomial Representation}{30}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Modulo reduction by $2^{2048} + 1$}{31}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}Arithmetic Operations}{32}{subsection.5.3.3}%
+\contentsline {subsubsection}{\nonumberline Addition}{32}{subsubsection*.17}%
+\contentsline {subsubsection}{\nonumberline Subtraction}{33}{subsubsection*.19}%
+\contentsline {section}{\numberline {5.4}Kroneker+ Steps}{33}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Step 1: Reorder coefficients and SNORT}{34}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Step 2: Multiplication by weights $X^i$}{35}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}Step 3: Forward Butterfly}{35}{subsection.5.4.3}%
+\contentsline {subsection}{\numberline {5.4.4}Step 4: Multiplication}{36}{subsection.5.4.4}%
+\contentsline {subsection}{\numberline {5.4.5}Step 5: Backward Butterfly}{37}{subsection.5.4.5}%
+\contentsline {subsection}{\numberline {5.4.6}Step 6: Multiplication by inverse weights $X^{-i}$ and $t^{-1}$}{37}{subsection.5.4.6}%
+\contentsline {subsection}{\numberline {5.4.7}Step 7: SNEEZE, reorder coefficients and reduction modulo q}{38}{subsection.5.4.7}%
+\contentsline {chapter}{\numberline {6}Analysis}{40}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Cycle Count per Step}{40}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Comparison with other implementations of polynomial multiplication schemes}{42}{section.6.2}%
+\contentsline {chapter}{\numberline {7}Conclusion}{44}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Overview}{44}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Future Work}{44}{section.7.2}%
+\contentsline {chapter}{\nonumberline Bibliography}{45}{chapter*.22}%
+\providecommand \tocbasic@end@toc@file {}\tocbasic@end@toc@file 

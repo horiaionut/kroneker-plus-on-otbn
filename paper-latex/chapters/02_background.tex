@@ -1,0 +1,510 @@
+\chapter{Background}\label{chapter:background}
+
+Throughout this section we will deal with polynomials from the ring $\Rnq$ since this is the setting in which the Dilithium scheme operates. Many of the discussed considerations do apply to the more general settings of $\R$, $\Z[X]$ or even replacing $\Z$ by a general ring under the assumption that the necessary inverses exist. We start by introducing the reader to arguably simpler technique of mapping polynomials to integers and back, and continue with various ways of viewing the polynomials such that this conversion and the multiplication in the integers domain become most efficient. We include with each method high-level pseudocode but we keep the implementation details and OTBN instruction set specific approaches for the implementation chapter.
+
+\section{Notation}
+
+In this thesis a few notations and signs are used to simplify the descriptions and add more details. $M(b)$ denotes the multiplication time for multiplying two b-bit numbers and it is assumed to be an increasing function. The number $t$ is the degree of the polynomial on which the NTT is computed and acts as a tradeoff parameter between the integer size, NTT computation cost and the multiplication cost. The input polynomial degree will be denoted by $n$ and $q$ will be the modulus by which coefficients of the output polynomial need to be reduced. The unique integer $\hat{a}$ = a $mod$ b such that $0 \leq \hat{a} < b$ is denoted by a $mod^+$ b. A polynomial $f \in \Rnq$ will be written in it's usual form $f = \sum_{i=0}^{n-1} f_i X^i$ as well as in coefficient-vector form $f = (f_0, \ldots, f_{n-1})$. We denote the coefficient-wise multiplication of 2 polynomials or sequences by $\cdot$ and the convolution operation by $*$.
+
+The space of vectors of polynomials on which Dilithium works is denoted by $S_{q, \alpha}^k = \{w \in \Rnq$ s.t. $0 \leq w_i < \alpha\}^k$ be the space of vectors of polynomials limited by $\alpha$.
+
+\section{Dilithium Digital Signature Scheme}
+
+Dilithium~\parencite{cryptoeprint:2017/633} is a lattice-based cryptographic scheme that works with polynomials from $\Rnq$ for $q = 8380417 = 2^{23} - 2^{13} + 1$ and $n = 256$. Many other important schemes are operating on lattices in their inner workings, therefore performance improvements to the lattice specific operations can transfer to other schemes and have a significant impact. The bottleneck in this type of cryptographic schemes is the matrix-vector multiplication of a matrix $A \in (\Rnq)^{m \times k}$ and a vector $v \in S_{q, \alpha}^k$ with $\alpha = (q - 1) / 16$.~\autoref{tab:parameters1} from \parencite*{cryptoeprint:2017/633} contains the values of these parameters for different security levels. Since $m$ and $k$ are small, the actual factor that makes the matrix vector multiplication expensive is not the number of operations, rather the actual polynomial multiplication. Different techniques exist for speeding this computation up, one of them being the $NTT$ which is used in Dilithium and which maps polynomials to another domain ($NTT$ domain) where polynomial multiplication becomes pairwise coefficient multiplication. For performance reasons, the scheme generates the numbers used for the coefficients of the polynomials directly in the $NTT$ domain. To apply another method for speeding up the multiplication, one would have to tweak the scheme to generate the numbers in the usual domain.
+
+It is important to note that the modulo polynomial $X^n + 1$ was chosen such that mathematical formulas and the implementation simplify and can be optimized. The fact that $X^n = -1\ \bmod (X^n + 1)$ makes the implementation of the modulo operation trivial by replacing $X^n$ with $-1$. The fact that there is a plus instead of a minus is also important for the implementation of the $NTT$, allowing for clever optimizations.
+
+
+\begin{table}[htpb]
+    \caption[]{Dilithium parameters taken from \parencite*{cryptoeprint:2017/633} }\label{tab:parameters1}
+    \centering
+    \begin{tabular}{l l l l l l}
+      \toprule
+        Security level & n & q & m & k & $\alpha$\\
+      \midrule
+        weak & 256 & 8380417 & 3 & 2 & 523776 \\
+        medium & 256 & 8380417 & 4 & 3 & 523776 \\
+        recommended & 256 & 8380417 & 5 & 4 & 523776 \\
+        very high & 256 & 8380417 & 6 & 5 & 523776 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+\section{Kroneker substitution}
+
+Kroneker substitution \parencite*{KroneckerGrundzgeEA} is a classical technique for reducing polynomial arithmetic to integer arithmetic. The approach is based on the observation that evaluating a polynomial at an integer point allows for recovering the polynomial by successive modulo operations and divisions by this value. If a \emph{large enough} evaluation point is used, the coefficients are packed in such a way that each one has a large \emph{room}. When multiplying two polynomials packed in such a way, the \emph{large room property} eliminates the possibility of having carries from one \emph{room} to the next effectively not allowing coefficient to mix with one another. Take for example $f(X) = 3 X + 2 \implies f(100) = 302$ and $g(X) = 5 X + 10 \implies g(100) = 510$. Then $f(100) \cdot g(100) = 302 \cdot 510 = 154020$ and $f(X) \cdot g(X) = 15 X^2 + 40 X + 20$ which can be recovered from 154020 by grouping the digits. This process becomes less straight forward when the polynomials contain negative coefficients but it turns out that it is also possible to work with them. Grouping the digits can be changed with applying modulo operations and divisions by the evaluation point when the value is not as nice as in the previous example. For performance reasons, this point is usually chosen to be $2^l$ for some $l \in \Z$ large enough. 
+
+Kroneker substitution can be used for both multiplications and additions, and also for computations modulo $X^n + 1$ as stated in~\parencite{cryptoeprint:2020/1303}. Given a certain sequence of operations (e.x. $a \cdot b + c \cdot d + e$ with $a, b, c, d, e \in \Rnq$), an evaluation point that makes the method work correctly for a certain set of polynomials depends only on an upper and lower bound on the coefficients of the resulting polynomial. These can be computed from upper and lower bounds on the coefficients of the polynomials in the given set.~\parencite{cryptoeprint:2018/425} details a couple of results on choosing evaluation points in various settings.~\parencite{cryptoeprint:2020/1303} points out that, although the coefficients of the polynomials $f \cdot g$ and $f \cdot g$ mod $X^n + 1$ are different, since any coefficient of the $f \cdot g$  is the sum of at most $n$ products of coefficient from $f$ and $g$ while coefficients in the $f \cdot g$ mod $X^n + 1$ are sums of exactly $n$ such coefficient products, the minimal evaluation point for Kroneker substitution is the same for usual multiplication and multiplication modulo $X^n + 1$. In other words, the value of $l$ when the computations are performed modulo $X^n + 1$ can be chosen to be the same as if no modulo reduction was performed. Bellow, algorithm \cref{alg:snort} and algorithm \cref{alg:sneeze} taken from ~\parencite*{cryptoeprint:2018/425} describe the $SNORT$ and $SNEEZE$ operations respectively.
+
+
+\begin{algorithm}
+    \caption{SNORT operation of Kroneker substitution}
+    \label{alg:snort}
+    \begin{algorithmic}[1]
+    
+    \Procedure{SNORT}{$g, f \in \Z[X]$, bitlength $l$}
+
+        \Return $g(2^l)$ $mod^{+}$ $f(2^l)$
+    
+    \EndProcedure
+    
+    \end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+    \caption{SNEEZE operation of Kroneker substitution}
+    \label{alg:sneeze}
+    \begin{algorithmic}[1]
+    
+    \Procedure{SNEEZE}{$m \in \Z[X]$ monic, $G \in \{0, \dots, f(2^l) - 1\}$, bitlength $l$}
+
+        $n \leftarrow$ deg(f)
+
+        $G[-1] = G$
+
+        \For{$i = 0, \dots, n - 1$}
+
+            \State $e[i] \leftarrow G[i - 1]$ $mod^+$ $2^l$ 
+            \State $G[i] \leftarrow (G[i - 1] - e[i]) / 2^l$ 
+            \If{$e[i] > 2^{l - 1}$} \Comment{negative coefficients}
+                \State $e[i] \leftarrow e[i] - 2^l$
+                \State $G[i] \leftarrow G[i] + 1$
+            \EndIf
+        \EndFor
+
+        \For{$i = 0, \dots, n - 1$}
+            \State $e[i] \leftarrow e[i] - f_i \cdot G[n - 1]$
+        \EndFor
+
+        \Return $e[0, \cdots n - 1]$
+    
+    \EndProcedure
+    
+    \end{algorithmic}
+\end{algorithm}
+ 
+\section{Fourier Transformation}
+
+To set up the stage for the upcoming descriptions, let $f = \sum_{i=0}^{n - 1} X^i$, $g = \sum_{i=0}^{n - 1} X^i$ be in $\Rnq$. The purpose of all the discussed procedures is to compute the multiplication $h = f * g $ $mod$ $(X^n + 1)$. The heavy operation is the polynomial multiplication, the modulo reduction being much faster. Therefore, multiplication in $\Rnq$ would not be significantly slower than multiplication in $\Rq$ but the modulo reduction by  $X^n + 1$ proves to be important for the mathematical details of the described methods and allows for faster multiplication algorithms.
+
+\subsection{Discrete Fourier Transform}
+
+The discrete Fourier transform (DFT) is an incredibly widely used tool with applications in many domains, most notably being signal processing and computing convolutions. It transforms a complex-valued, continuous function from it's original domain (called time domain in physical applications) to another domain (called frequency domain in the same application) where different properties hold. For the purpose of polynomial multiplication, the convolution theorem~\parencite{enwiki:1171895737} is the most important property that allows for important speed up. The theorem says that a convolution of two functions in their domain of definition can be computed by computing the inverse of the point-wise multiplication of the two transformed functions. The following equation summarizes this description:
+
+\begin{equation*}
+    f * g = DFT^{-1}(DFT(f) \cdot DFT(g))
+\end{equation*}
+
+The discrete-time Fourier transform (DTFT) is a modified DFT that is applicable to discrete finite sequences of complex numbers. The convolution theorem holds for this transform as well and since polynomial multiplication is in fact a convolution operation of the sequences represented by the polynomial coefficients. Because of this, the DTFT can be employed to speed up this multiplication. The time complexity of plain polynomial multiplication is $\mathcal{O}(n^2)$ where n is the polynomial degree, and that of the multiplication via DTFT is $\mathcal{O}(n \log(n))$ so it is a significant theoretical improvement. Since efficient implementations of the DTFT are also possible, the DTFT became also a widely used tool in practice. A very good description of the $DTFT$ from an algorithmic point of view can be found in the Introduction to Algorithms book~\parencite{10.5555/1614191} in the chapter about Fast Fourier Transformation. That introduction leads to the intuitive, recursive implementation of the algorithm. Since the $DTFT$ is used in uncountable many time-critical applications, several mathematical and algorithmic optimizations have been developed in the past.
+
+\subsection{Cyclic Convolution-based Number Theoretic Transform}
+
+The $NTT$ method is a central component of this work. The method is a particular case of the famous DTFT which is applied in a finite field as proposed by Pollard~\parencite{Pollard1971TheFF}. A survey that presents the $NTT$ and a few of it's variants in a mathematical way is~\parencite{liang2022number}. It is not possible to implement all optimizations at once because some are mutually exclusive, hence there exist a couple of ways to implement the $NTT$, some being more cache-aware, others focusing on reducing the number of computations and so on. This section provides a short introduction to the $NTT$ and lists possible optimizations. The section starts by explaining a simple algorithm and it's recursive implementation and continues with the equivalent iterative implementation and lastly a very efficient variant is described.
+
+The first important thing to understand is what can the NTT do. Besides other things, in the context of polynomial multiplication it is a method to efficiently compute convolutions. This section identifies two types of convolutions and the next section will explain a third one. The first one is the linear convolution:
+
+\begin{definition}[Linear Convolution]
+    The linear convolution of two polynomials $f, g \in \Rq$ of degree n is their usual multiplication $h = f * g = \sum_{k=0}^{n-1} h_k X^k$ where $h_k = \sum_{i=0}^k f_i \cdot g_{k-i} \mod q$. To compute the product in $\Rq / (m(X))$ for some polynomial $m(X)$, one can compute the linear convolution $h = f * g \in \Rq$ and then compute $h$ mod $m(X)$. 
+\end{definition}
+
+The naive way of computing the coefficients $h_k$ of a linear convolution is to directly evaluate the sum for each of them. The number theoretic transformation with $2n$ evaluation point, i.e. $NTT_{2n}$, is an alternative to this direct computation that is more efficient while producing the same result. The second type of convolution is the cyclic convolution:
+
+\begin{definition}[Cyclic Convolution]
+    The cyclic convolution of two polynomials $f, g \in \Rq/(X^n - 1)$ is their usual multiplication in the underlying ring: $h = f * g = \sum_{k=0}^{n-1} h_k X^k$ where $h_k = \sum_{i=0}^k f_i \cdot g_{k-i} + \sum{i=k + 1}^{n-1} f_i + g_{k+n-i} \mod q$. 
+\end{definition}
+
+Similar with the linear convolution, the cyclic convolution can be computed efficiently using a number theoretic transformation with n evaluation points, i.e. $NTT_n$. This transformation is defined below:
+
+\begin{definition}[NTT and Inverse NTT]
+    Fixing a number $n$, and given a polynomial $f = \sum_{i=0}^{n-1} f_i X^i \in \Rq$ of degree bound $n$, it's transformed version is:
+    
+    \begin{equation*}
+        F = NTT_n(f) = \sum_{k=0}^{n-1} F_k X^k
+    \end{equation*}
+    
+    where $F_k = f(\omega_n^k) = \sum_{i=0}^{n-1} f_i \cdot w_n^{ki}$ and $w_n$ is the n-th principal unity root in $\Zq$. These roots exist if $n = 1\ mod\ q$. The inverse $NTT$ of a polynomial $F \in \Rq$ of degree bound $n$ is:
+    
+    \begin{equation*}
+        f = INTT_n(F) = n^{-1} \sum_{i=0}^{n-1} f_i X^i
+    \end{equation*}
+
+    where $f_i = F(\omega_n^{-i}) = \sum_{k=0}^{n-1} F_k \cdot w_n^{-ik}$.
+\end{definition}
+
+\begin{theorem}
+    It holds that $f = INTT_n(NTT_n(f))$.
+\end{theorem}
+
+Given the definition of the NTT, it is educative to look back at the linear convolution. The usual product of two polynomials of degree $n$ is a polynomial of degree $2n$. In order to obtain such a polynomial, the NTT with $2n$ evaluation points needs to be used. In order to use such an NTT, the input polynomials need to have $2n$ degree which can be achieved by padding them with n 0s. To compute the cyclic convolution, the NTT with only n evaluation points is needed, hence no padding is required.
+
+Directly evaluating all sums in the above definition leads to $\mathcal{O}(n^2)$ computations which can be more efficiently computed through the so called fast fourier transformation ($FFT$) algorithm. Variants of it are presented in the subsequent sections. For the moment, in order to develop an understanding of the NTT, the next section presents an alternative way of representing a polynomial and points out how the transformation between the usual representation and the new one can be achieved through the NTT.
+
+\subsubsection{Point value representation}
+
+The naive way of computing the coefficients $h_k$ of a linear convolution is to directly evaluate the sum for each of them. This takes $\mathcal{O}(n^2)$ time and needs to be improved. A more clever solution is to represent the polynomials in a different way as presented in~\parencite{10.5555/1614191}:
+
+\begin{definition}[Point-Value Representation]
+    The point-value representation of a polynomial $f = \sum_{i=0}^{n-1} f_i X^i \in \Rq$ (or $\mathbb{Z}[X]$ or $\Rnq$) is any sequence $\boldsymbol{f}$ = ($(x_0, f(x_0))$, $(x_1, f(x_1))$, $\ldots$, $(x_{n-1}, f(x_{-1}))$) where the evaluation points $x_k$ are distinct.
+\end{definition}
+
+The process of finding a sequence $(x_0, \ldots, x_{n-1})$ of evaluation points and evaluating the polynomial at these points is called evaluation. The inverse process, i.e. finding a polynomial $f$ of degree at most $n$, from a sequence $((x_0, y_0), \ldots, (x_{n-1}, y_{n-1}))$ such that $f(x_k) = y_k$ is called interpolation and can be algorithmically implemented. The uniqueness of such a polynomial is guaranteed by theorem 30.1 from~\parencite{10.5555/1614191}. Both evaluation and interpolation can be naively implemented in $\mathcal{O}(n^2)$ but, as we will see, this can be sped up to $\mathcal{O}(n \log(n))$.
+
+The point-value representation is often used for fast polynomial multiplication since $h(x_k) = f(x_k) \cdot g(x_k)$, therefore to compute the point-value representation of the product polynomial $h$, pairwise multiply the elements of the point-value representation of $f$ and $g$. The only issue with this is that when the terms $f$ and $g$ have at most degree $n$, their product will be of degree at most $2n$, therefore possibly larger than $n$. Hence, to obtain a representation of $h$ one needs to use $2n$ evaluation points even if that is redundant for $f$ and $g$ separately. The multiplication can be then carried out by first evaluating $f$ and $g$ at $2n$ points, pairwise multiplying the values and interpolating the resulting point-value representation. The following visualization can be helpful:
+
+\begin{equation*}
+    \begin{rcases}
+        \begin{aligned}
+        f &\mapsto ((x_0, y_0), \ldots, (x_{2n}, y_{2n})) \\
+        g &\mapsto ((x_0, y^{'}_0), \ldots, (x_{2n}, y^{'}_{2n}))
+        \end{aligned}
+    \end{rcases} \mapsto ((x_0, y_0 \cdot y^{'}_0), \ldots, (x_{2n}, y_{2n} \cdot y^{'}_{2n})) \mapsto f \cdot g 
+\end{equation*}
+
+As already pointed out, a point-value representation exists for any sequence of distinct evaluation points. To speed up the evaluation and interpolation, one can work with the $2n$ unity roots $\omega_{2n}^0,\ \omega_{2n}^1,\ \ldots,\ \omega_{2n}^{2n}$ where $\omega_{2n}$ is the principal $2n$ unity root. For these points, the evaluation is exactly the $NTT$, and we have:
+
+\begin{equation*}
+    INTT_{2n}(NTT_{2n}(f)) = f = interpolation_{2n}(eval_{2n}(f)) = interpolation_{2n}(NTT_{2n}(f)) 
+\end{equation*}
+
+Since this holds for all $f$, the interpolation and $INTT$ are also the same. Computing the $NTT$ and $INTT$ can be done through the Cooley-Tukey Butterfly algorithm of complexity $\mathcal{O}(n \log n)$ as presented in the next section.
+
+\subsubsection{Recursive Cooley-Tukey Butterfly}
+
+There are many variants of the fast fourier transformation algorithm, this section presenting a simple, recursive variant inspired from~\parencite{10.5555/1614191}. The method works in asymptotic time $\mathcal{O}(n \log(n))$. While other variants can deal with arbitrary values of $n$, this version and all upcoming ones are only working with $n$ being a power of 2, which is enough for our purposes.
+
+The recursion takes as input a degree $n-1$ polynomial $f = \sum_{i=0}^{n-1} f_i \cdot X^i$ and constructs two new polynomials as follows:
+
+\begin{align*}
+    f_{even} &= f_0 X^0 + f_2 X^1 + f_4 X^2 + \ldots + f_{n-2} X^{n/2-1} \\
+    f_{odd} &= f_1 X^0 + f_3 X^1 + f_5 X^2 + \ldots + f_{n-1} X^{n/2-1} 
+\end{align*}
+
+It is easy to see that $f(x) = f_{even}(x^2) + x f_{odd}(x^2)$. To evaluate $f$ at the unity roots $w_n^0, w_n^1, \ldots$, $w_n^{n-1}$, one needs to evaluate the two new polynomials at $(w_n^0)^2, (w_n^1)^2$, $\ldots\ (w_n^{n-1})^2$ and combine the results as shown. This list contains only $n/2$ distinct values since $w_n^i = w_n^{n+i}$. Further, the equality $w_n^{2i} = w_{n/2}^i$ holds, hence the procedure evaluates the new polynomials at the $n/2$ $n/2$-roots of unity. Even more, note that $w_n^{n/2 + i} = w_n^{n/2} \cdot w_n^i = - w_n^i$ since $w_n^{n/2} = -1$. The following shows how the recursion works for $0 \leq i < n/2$:
+
+\begin{equation*}
+    f(\omega_n^i) = f_{even}(\omega_n^{2i}) + \omega_n^i \cdot f_{odd}(\omega_n^{2i}) = f_{even}(\omega_{n/2}^{i}) + \omega_n^i \cdot f_{odd}(\omega_{n/2}^{i}) 
+\end{equation*}
+
+For $n/2 \leq i < n$ we get:
+
+\begin{align*}
+    f(\omega_n^i) &= f_{even}(\omega_n^{2i}) + \omega_n^i \cdot f_{odd}(\omega_n^{2i}) \\ 
+    &= f_{even}(\omega_{n/2}^{i}) + \omega_n^{n/2} \cdot \omega_n^{i - n/2} \cdot f_{odd}(\omega_{n/2}^{i})  \\
+    &= f_{even}(\omega_{n/2}^{i}) - \omega_n^{i - n/2} \cdot f_{odd}(\omega_{n/2}^{i}) 
+\end{align*}
+
+The base case of the recursion is a polynomial of degree $n=1$ for which the $NTT$ is the same polynomial again.  For simplification and clearer illustration, algorithm \cref{alg:cooley-butterfly} assumes that a table $w_n^i$ of unity roots for all $n$ and $i$ values needed is globally available.
+
+\begin{algorithm}
+    \setstretch{1.3}
+    \caption{Recursive Cooley-Tukey Forward Butterfly}
+    \label{alg:cooley-butterfly}
+    \begin{algorithmic}[1]
+    
+    \Procedure{$RecursiveNTT_n^{CT}$}{$f \in \Rq$}
+
+        \If {$n == 1$}
+
+            \Return f
+        \EndIf
+
+        \State $f_{even} \leftarrow f_0 X^0 + f_2 X^1 + f_4 X^2\ + \ldots + f_{n-2} X^{n/2-1}$
+
+        \State $f_{odd} \leftarrow f_1 X^0 + f_3 X^1 + f_5 X^2 + \ldots + f_{n-1} X^{n/2-1}$
+
+        \State $f^{'}_{even} \leftarrow RecursiveNTT_{n/2}(f_{even})$
+
+        \State $f^{'}_{odd} \leftarrow RecursiveNTT_{n/2}(f_{odd})$
+
+        \For {$i = 0, \dots, n / 2 - 1$}
+            \State $F_i = (f^{'}_{even})_i + \omega_n^i (f^{'}_{odd})_i$
+
+            \State $F_{i + (n/2)} = (f^{'}_{even})_i - \omega_n^i (f^{'}_{odd})_i$
+        \EndFor
+
+        \Return F
+    
+    \EndProcedure
+    
+    \end{algorithmic}
+\end{algorithm}
+
+The inverse $NTT$ can be computed by using $w_n^{-ik}$ instead of $w_n^{ik}$ and multiplying the result of the last recursion by $n^{-1}$. We do not detail that implementation here because it is straightforward to deduce it from the implementation of the $NTT$ and because it won't be used in the final version of the algorithm. For more in-depth explanations and proves of the statements in this subsection, the reader is encouraged to consult~\parencite{10.5555/1614191}. That being said, we already have a working, $\mathcal{O}(n \log(n))$ polynomial multiplication procedure:
+
+\begin{enumerate}
+    \item Compute the unity roots $\omega_m^i$ for $m \leq 2n$ a power of 2 and $0 \leq m$.
+    
+    \item Pad the input polynomials $f$ and $g$ of degree bound $n$ with $0$ coefficients such that all terms until $X^{2n - 1}$ show up in their description: 
+    \begin{align*}
+        f &= f_0 X^0 + \ldots + f_{n-1} X^{n-1}+ 0 X^{n} + 0 X^{n + 1} + \ldots 0 X^{2n - 1}
+    \end{align*}
+
+    \item Evaluate $f$ and $g$ at the unity roots by computing $F = RecursiveNTT_{2n}^{CT}(f)$, $G = RecursiveNTT_{2t}^{CT}(g)$.
+    \item Multiply $F$ and $G$ coefficient-wise. $H = F \cdot G$.
+    \item Interpolate $H$ by computing $h = RecursiveINTT_{2n}^{CT}(h)$.
+\end{enumerate}
+
+Next subsections are dedicated to optimizations that enable competitive running times. We add these optimizations one by one to ease comprehension.
+
+\subsubsection{Iterative Cooley-Tukey Butterfly}
+
+The first optimization that comes to mind after writing down the recursive version of the algorithm is to implement it in an iterative way. This variant is taken from ~\parencite{cryptoeprint:2013/866}. The new algorithm changes the order of the coefficients into the so called Bit-Reversed order defined in the following:
+
+\begin{definition}[Bit-Reversed Order]
+    The Bit-Reversed order of a sequence of $n = 2^k$ elements is the sequence obtained by swapping elements that are on positions for which their $k$-bit binary representations are inverses of each other. The Bit Reverse order of the Bit Reversed order of a sequence is again the initial sequence.
+\end{definition}
+
+Table \cref{tab:bit-reversed-order} provides a few examples. This order is actually the order in which the recursive method processes the coefficients, i.e. all pairs of coefficients on positions $(2i, 2i + 1)$ in the bit-reverse order will be processed in deepest levels of the recursive implementation. All groups of 4 consecutive positions will be processed one level above that and so forth. 
+
+\begin{table}[h]
+    \caption[]{}\label{tab:bit-reversed-order}
+    \centering
+    \begin{tabular}{l l l}
+      \toprule
+        k & $n = 2^k$ & permutation \\
+      \midrule
+        0 & 1 & 0 \\
+        1 & 2 & 0, 1 \\
+        2 & 4 & 0, 2, 1, 3 \\
+        3 & 8 & 0, 4, 2, 6, 1, 5, 3, 7 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+The iterative variant of the Cooley-Tukey Butterfly given in \cref{alg:IterativeCTNTT} takes an input polynomial in bit-reversed form, and it returns the result in the natural form. The outer-most for-loop represents the recursions, starting with the deepest, $m = 2$ standing for an input polynomial of only two coefficients. If one pictures the recursion as a binary tree, the iterative implementation tries to mimic the recursive algorithm by working it's way from bottom up to the root. It computes first the first level above the leaves (the leaves are the base case for which the $NTT$ is the input polynomial so there is nothing to be done), then the nodes one level above and so on. At one iteration of the outer for-loop, there will be $n/m$ nodes in the corresponding recursion tree level. The second for-loop indexes over all nodes at a specific level of this execution tree. The last for-loop corresponds to the only for-loop in the recursive version of the algorithm, i.e. computes the new coefficients from the results of the two child nodes. 
+
+A precomputed table of unity roots is again assumed to simplify the description and the understanding of the code. We will denote this algorithm by $NTT^{CT}_{bo \mapsto no}$ and it is easy to see that using the inverses of unity roots and multiplying with $1/n$ in the end one obtains the inverse transformation $INTT^{CT}_{bo \mapsto no}$. A careful reader will note that these two implementations are not directly compatible, i.e. the result of the $NTT^{CT}_{bo \mapsto no}$ needs to be converted to the bit-reversed form before it can be passed through $INTT^{CT}_{bo \mapsto no}$.
+
+\begin{algorithm}
+    \setstretch{1.3}
+    \caption{Iterative Cooley-Tukey Butterfly $bo \mapsto no$}
+    \label{alg:IterativeCTNTT}
+    \begin{algorithmic}[1]
+
+    \Procedure{$NTT^{CT}_{bo \mapsto no}$}{$f \in \Rq$ in bit-reversed order, $n$ degree bound of $f$}
+        \For {$m = 2, \ldots, n$ by $m \leftarrow 2m$}
+
+            \For {$k = 0, \ldots, n-1$ by $k \leftarrow k + m$}
+                \For {$j = 0, \ldots, m/2-1$}
+                    \State $u \leftarrow f_{j + k}$
+                    \State $v \leftarrow \omega_m^i \cdot f_{k + j + m/2}$
+                    \State $f_{k + j} \leftarrow (u + v) \mod q$
+                    \State $f_{k + j + m/2} \leftarrow (u - v) \mod q$
+                \EndFor
+            \EndFor
+
+        \EndFor
+
+        \Return f
+
+    \EndProcedure
+
+    \end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Removing the bit-reversal step}
+
+The bit-reversal step can be avoided with careful re-implementation. To do this, the implementation needs to simulate in a way the reordering by combining coefficient from the correct positions. The trade-off is that the result comes out in bit-reversed order. This aspect is not that much of an issue since applying $NTT^{CT}_{no \mapsto bo}$ to two polynomials $f$ and $g$ brings both to the bit-reversed transformed representations so pairwise multiplication will multiply the correct corresponding coefficients. To get back to the usual representation of the result in the usual domain, one just needs to apply $INTT^{CT}_{bo \mapsto no}$ explained the previous section.
+
+Since the input is in natural form, it is more challenging to combine the corresponding coefficients using the right unity roots at all steps. The for-loops keep their previous significance but the positions that are combined need to be adapted and the unity roots need to be used in bit-reversed order. To understand how it works, the following table shows all the computations performed by the algorithms for $n=8$:
+
+\bgroup
+\def\arraystretch{1.5}
+\begin{table}[htpb]
+    \caption[]{Computations of \cref{alg:IterativeCTno-bo} for $n=8$}\label{tab:computation_ct-no-bo}
+    \centering
+    \begin{tabular}{c|c|c|c}
+      \toprule
+        inpu (m=1) & m=2 & m=4 & output (m=8) \\
+      \midrule
+        $f_0$ & 
+        $f_0 + w_2^0 \cdot f_4 = f'_0$ & 
+        $f'_0 + w_4^0 \cdot f'_2 = f''_0$ & 
+        $f''_0 + w_8^0 \cdot f''_1 = f'''_0$ \\
+
+        $f_1$ & 
+        $f_1 + w_2^0 \cdot f_5 = f'_1$ & 
+        $f'_1 + w_4^0 \cdot f'_3 = f''_1$ & 
+        $f''_0 - w_8^0 \cdot f''_1 = f'''_1$ \\
+
+        $f_2$ & 
+        $f_2 + w_2^0 \cdot f_6 = f'_2$ & 
+        $f'_0 - w_4^0 \cdot f'_2 = f''_2$ &
+        $f''_2 + w_8^2 \cdot f''_3 = f'''_2$  \\
+
+        $f_3$ & 
+        $f_3 + w_2^0 \cdot f_7 = f'_3$ & 
+        $f'_1 - w_4^0 \cdot f'_3 = f''_3$ & 
+        $f''_2 - w_8^2 \cdot f''_3 = f'''_3$ \\
+
+        $f_4$ & 
+        $f_0 - w_2^0 \cdot f_4 = f'_4$ & 
+        $f'_4 + w_4^1 \cdot f'_6 = f''_4$ & 
+        $f''_4 + w_8^1 \cdot f''_5 = f'''_4$ \\
+
+        $f_5$ & 
+        $f_1 - w_2^0 \cdot f_5 = f'_5$ & 
+        $f'_5 + w_4^1 \cdot f'_7 = f''_5$ & 
+        $f''_4 - w_8^1 \cdot f''_5 = f'''_5$ \\
+
+        $f_6$ & 
+        $f_2 - w_2^0 \cdot f_6 = f'_6$ & 
+        $f'_4 - w_4^1 \cdot f'_6 = f''_6$ & 
+        $f''_6 + w_8^3 \cdot f''_7 = f'''_6$ \\
+
+        $f_7$ & 
+        $f_3 - w_2^0 \cdot f_7 = f'_7$ & 
+        $f'_5 + w_4^1 \cdot f'_7 = f''_7$ & 
+        $f''_6 - w_8^3 \cdot f''_7 = f'''_7$ \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\egroup
+
+Note how at the last step the unity roots show up in bit-reversed order. This can be understood by looking at the input and the output at each step. Remember that an outer for-loop step represents a level in the binary execution tree of the recursive algorithm. Each step of the second for-loop indexes the nodes at the specified level. In the iterative version of the algorithm, since it works it's way from bottom-up, the input to a node can be understood to be two equally sized arrays each being the output of one of it's child-nodes, one being $f'_{even}$ and one $f'_{odd}$ in the recursive variant. The trick is that both input arrays are assumed by this variant to be in bit-reversed order. Indeed, the bit reversed order of an array of two elements is the same array so the assumption holds at the beginning of the algorithm. The two input arrays are merged into an array of double sized array by the last for-loop of the algorithm, just as in the recursive case. Since the input arrays are both in bit-reversed order, one needs to combine corresponding coefficients using unity roots in bit-reversed order as well. Further more, the resulting array is also created in bit-reversed order so that the input for the next step is ready to be used.
+
+Aside from the bit-reversed order considerations, in this variant of the algorithm the inputs to each node are not anymore continuous blocks of coefficients but rather spread apart numbers. One can understand this by looking at the recursive algorithm that first takes the even-indexed coefficients $f_0, f_2, f_4, f_6$ and at the following recursion step takes again the even-indexed coefficients of the new array, i.e. $f_0, f_4$. These two coefficients are spread apart in the input to this iterative version and this needs to be taken into consideration when designing the algorithm. \cref{alg:IterativeCTno-bo} takes care of both aspects.
+
+\begin{algorithm}[h]
+    \setstretch{1.3}
+    \caption{Iterative Cooley-Tukey Butterfly $no \mapsto bo$}
+    \label{alg:IterativeCTno-bo}
+    \begin{algorithmic}[1]
+
+    \Procedure{$NTT^{CT}_{no \mapsto bo}$}{$f \in \Rq$, $n$ degree bound of $f$}
+        \For {$m = 2, \ldots, n$, by $m \leftarrow 2m$}
+            \State $w_{BitRev} = bit\_reverse([w_m^i\ for\ i \in [0, \ldots, m / 2]])$
+
+            \For {$k = 0, \ldots, n/m - 1$}
+                \For {$j = 0, \ldots, m/2 - 1$}
+                    \State $p \leftarrow j \cdot (2 \cdot n/m) + k$
+                    \State $u \leftarrow f_{p}$
+                    \State $v \leftarrow w_{BitRev}[j] \cdot f_{p + n/m}$
+                    \State $f_{p} \leftarrow (u + v) \mod q$
+                    \State $f_{p + m} \leftarrow (u - v) \mod q$
+                \EndFor
+            \EndFor
+        \EndFor
+
+        \Return f
+
+    \EndProcedure
+
+    \end{algorithmic}
+\end{algorithm}
+
+\subsection{Negative Wrapped Convolution-based NTT}
+
+In the previous section two different convolutions are described and the ways of using the NTT and fast fourier transformation algorithm to compute them are presented. The purpose of this section is to introduce a third convolution and a slightly modified algorithm for computing it. The following defines the convolution: 
+
+\begin{definition}[Negative Wrapped Convolution]
+    The negative wrapped convolution of two polynomials $f, g \in \Rnq$ of degree n is their usual multiplication $h = f \cdot g = \sum_{k=0}^{n} h_k X^k$ where $h_k = \sum_{i=0}^k f_i \cdot g_{k-i} - \sum_{i=k+1}^{n-1} f_i \cdot g_{k + n - i}$.
+\end{definition}
+
+Let $\psi = (\omega_{2n}^0, \ldots, \omega_{2n}^{n-1})$ and it's inverse
+$\psi^{-1} = (\omega_{2n}^{-0}, \ldots, \omega_{2n}^{-(n-1)})$. We define:
+
+\begin{align*}
+   NTT^\psi(f, n) &=NTT(\psi * f, n) \\
+    INTT^{\psi^{-1}}(F, n) &= \psi^{-1} * INTT(F, n)
+\end{align*}
+
+It holds that:
+
+\begin{itemize}
+    \item $f = INNT^{\psi^{-1}}(NTT^\psi(f, n), n)$
+    \item $NTT^\psi(f \cdot g, n) =$NTT$^\psi(f, n) \cdot$NTT$^\psi(g, n)$
+\end{itemize}
+
+With this we can first coefficient-wise multiply the input polynomials with $\psi$, apply the $NTT^{CT}_{no \mapsto bo}$ pairwise multiply the point-value representations, apply the $INTT^{CT}_{bo \mapsto no}$ and lastly multiply by $\psi^{-1}$. An optimization to this process it to merge the multiplication with $\psi$ into the forward $NTT$. This can be achieved in algorithm \cref{alg:IterativeCTno-bo} and \cref{alg:IterativeCTNTT} by multiplying with a $\omega_{2m}$ every time a multiplication by a twiddle factor (power of $\omega_m$) is performed. This ensures that at each step, all intermediary results are composed of the input coefficients multiplied with their corresponding factors. Another way to achieve the same effect is shown in algorithm \cref{alg:NWCCTno-bo}.
+
+\begin{algorithm}
+    \setstretch{1.3}
+    \caption{NWC Cooley-Tukey Butterfly $no \mapsto bo$}
+    \label{alg:NWCCTno-bo}
+    \begin{algorithmic}[1]
+
+    \Procedure{$NTT^{CT, \psi}_{no \mapsto bo}$}{$f \in \Rq$, $n$ degree bound of $f$, $\mathbf{p} = (\omega_{2n}^0, \ldots, \omega_{2n}^{n-1})$ in bit-reversed order}
+        \State $k \leftarrow n/2$
+        \For {$m = 1, \ldots, n / 2$, by $m \leftarrow 2m$}
+            \For {$i = 0, \ldots, m - 1$}
+                \State $jFirst \leftarrow 2ik$
+                \State $jLast \leftarrow jFirst + k - 1$
+                \For {$j = jFirst, \ldots, jLast$}
+                    \State $u \leftarrow f_{j}$
+                    \State $v \leftarrow p_{m + i} \cdot f_{j + k}$
+                    \State $f_{j} \leftarrow u + v$
+                    \State $f_{j + k} \leftarrow u - v$
+                \EndFor
+            \EndFor
+
+            \State $k \leftarrow k/2$
+        \EndFor
+
+        \Return f
+
+    \EndProcedure
+
+    \end{algorithmic}
+\end{algorithm}
+
+This version of the algorithm does not have an inverse equivalent since it turns out to be impossible to combine the multiplication with $\psi^{-1}$ with the backward algorithm because multiplication by unity roots happens before addition. This is a limitation of the Cooley-Tukey butterfly which can be overcome by using another butterfly for the inverse transformation. The following subsection presents the Gentlemen-Sande Butterfly and gives the optimized inverse algorithm $NTT^{GS, \psi}_{bo \mapsto no}$. Note that for the inverse operation one needs to go from the bit-reverse order to the natural order of the coefficients since the forward transformation brought the coefficients to bit-reversed order.
+
+\subsection{Gentlemen-Sande Butterfly}
+
+The Gentlemen-Sande butterfly differs from the Cooley-Tukey one through the way coefficients are combined. Instead of splitting the polynomial into two polynomials for the even and for the odd indexed coefficients and computing the lower half and upper half coefficients in two different ways, the polynomial is split into 2 polynomials corresponding to the lower and upper halves coefficients and which are then combined through two different formulas to get new even and odd indexed coefficients. This allows for the $\psi$ factors to be integrated in the two formulas (the butterfly operations). More precisely, setting $\psi = \omega_{2n}$, ignoring the multiplication by the $n^-1$ factor which needs to be performed separately and following the description on\parencite{10.1007/978-3-319-22174-8_19} we have:
+
+\begin{align*}
+    f_k = \psi^{-k} \cdot F(\omega^{-k}_n) &= \psi^{-k} \sum_{i=0}^{n -1} F_i \omega^{-ik}_n = \psi^{-k} \sum_{i=0}^{n/2 -1} F_i \omega^{-ik}_n + F_{i + n/2} \cdot \omega_n^{-(i + n/2)k} \\
+    &= \psi^{-k} \sum_{i=0}^{n/2 -1} (F_i + F_{i + n/2} \cdot \omega_n^{-kn/2}) \cdot \omega^{-ik}_n
+\end{align*}
+
+For even indexes $k = 2r$ we get:
+
+\begin{align*}
+    f_{2r} = \sum_{i=0}^{n/2 -1} (F_i + F_{i + n/2}) \cdot \omega^{-ir}_{n/2} (\psi^2)^{-r}
+\end{align*}
+
+And for $k = 2r + 1$:
+
+\begin{equation*}
+    f_{2r + 1} = \sum_{i=0}^{n/2 -1} ((F_i - F_{i + n/2}) \cdot \omega_n^{-l} \cdot \psi^{-1}) \cdot \omega^{-ir}_{n/2} (\psi^2)^{-r}
+\end{equation*}
+
+This defines a recursion similar to the one of the Cooley-Tukey butterfly. Since the process of adding optimizations one by one is very similar to the one for the Cooley-Tuckey butterfly, we skip ahead to the final version shown in algorithm \cref{alg:OptimizedGSbo-no}. Note that the implementation for going from bit-reversed order to the natural order is presented since this is what we need.
+
+\begin{algorithm}[h]
+    \setstretch{1.3}
+    \caption{Optimized Gentlemen-Sande Butterfly $bo \mapsto no$}
+    \label{alg:OptimizedGSbo-no}
+    \begin{algorithmic}[1]
+
+    \Procedure{$NTT^{GS, \psi}_{bo \mapsto no}$}{$F \in \Rq$ in bit-reversed order, $n$ degree bound of $F$, $\mathbf{p} = (\omega_{2n}^{-0}, \ldots, \omega_{2n}^{-(n-1)})$ in bit-reversed order}
+        \State $k \leftarrow 1$
+        \For {$m = n/2, \ldots, 1$, by $m \leftarrow m/2$}
+            \For {$i = 0, \ldots, m - 1$}
+                \State $jFirst \leftarrow 2ik$
+                \State $jLast \leftarrow jFirst + k - 1$
+                \For {$j = jFirst, \ldots, jLast$}
+                    \State $u \leftarrow F_{j}$
+                    \State $v \leftarrow F_{j + k}$
+                    \State $F_{j} \leftarrow u + v$
+                    \State $F_{j + k} \leftarrow (u - v) \cdot p_{m + i}$
+                \EndFor
+            \EndFor
+
+            \State $k \leftarrow 2k$
+        \EndFor
+
+        \Return f
+
+    \EndProcedure
+
+    \end{algorithmic}
+\end{algorithm}
+
+\section{OpenTitan Big Number Accelerator (OTBN)}
+
+The OTBN \parencite{OTBN} is a coprocessor for asymmetric cryptographic operations like RSA or Elliptic Curve Cryptography (ECC) based on the Ibex core (2-stage pipeline). It implements a base RISC-V instruction set and its own big number instructions. It is optimized for wide integer arithmetic, more precisely, it works with both 32-bit and 256-bit registers. It focuses on security by keeping the design simple and leaving out instructions such as interrupts or exceptions and all instructions it implements are executable in a single cycle. 
+
+One important thing to note is that the wide data multiplier is only 64 bits wide even if the Wide Data Registers (WDRs) are 256 bits wide. Also, reads and writes to the data memory are only possible at multiples of 32 bits locations for the General Purpose Registers (GPRs) and multiples of 256 bits locations for the WDRs. A couple of other restrictions that turn out to be hindering a more elegant and succinct implementations are identified: inability to transfer data from wide data registers to and from the smaller general purpose registers, missing register indexing, variable size shift instructions on WDRs and modulo reduction instruction and WDR instructions' incapability of working with constants.

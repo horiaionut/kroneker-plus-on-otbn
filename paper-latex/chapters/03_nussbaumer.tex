@@ -1,0 +1,31 @@
+\chapter{Nussbaumer Method}
+
+In the context of polynomial multiplication Nussbaumer \parencite{1163372} gives a method of multiplying large degree polynomials by mapping them to lower degree polynomials, applying multiplication via NTT and mapping the result back to a large degree polynomial.This reduction of the polynomial degree constitutes the first step of the Kroneker+ algorithm \parencite{cryptoeprint:2020/1303} that is discussed in the next chapter and is implemented in this work. 
+
+Nussbaumer starts by transforming a degree $n$ polynomial to a degree $t$ polynomial where $t | n$. The coefficients of the new polynomial are again polynomials in a new variable. The method can be used in conjunction with Kroneker to evaluate these polynomial coefficients to obtain an usual polynomial with a low degree. The trade-off is that the new coefficients can become pretty large, hundreds or even thousands of bits long and operations on them are expensive. Following \parencite{cryptoeprint:2020/1303}, we start by defining the mapping:
+
+\begin{align*}
+    \Psi : \Rnq &\mapsto (\Ryq)[X] / (Y - X^t) \\
+    f = \sum_{i=0}^{n-1} f_i X^i &\mapsto \Psi(f) = \sum_{i=0}^{t-1}(\sum_{j=0}^{n/t-1} f_{i+jt} Y^j) X^i
+\end{align*}
+
+The polynomial $\Psi(f)$ has degree less than $t$ in $X$ and so it can be trivially mapped to a polynomial in $\Ryq[X]$ with the exact same coefficients for $X^0, \ldots, X^{t-1}$, where the coefficients of the monomials $X^t, \ldots$ are $0$. Further more, this polynomial can be viewed as a polynomial $f' \in \Ryq[X]/(X^{2t} - 1)$. This modulus is chosen such that the result of the multiplication of two polynomials $f'$ and $g'$, for which only the first $t$ coefficients are non-zero, can be uniquely represented in the ring (only the first $2t$ coefficients will be non-zero). Since in $\Ryq[X]/(X^{2t} - 1)$ it holds that $Y^{n/t} = -1$, and requiring that $t^{2} | n$, it follows that there exists a $2t$-root $\omega_{2t} = Y^{n/t^2}$ and we can apply a cyclic $NTT_{2t}$ with this root. We therefore get:
+
+\begin{align}\label{eq:3.mult}
+    h'(\omega_{2t}^i) &= f'(\omega_{2t}^i) \cdot g'(\omega_{2t}^i) && \text{for}\ i = 0, \ldots, 2t-1
+\end{align}
+
+The evaluations $f'(\omega_{2t}^i)$ and $g'(\omega_{2t}^i)$ are computed using $NTT_{2t}$. Applying $INTT_{2t}$ one obtains the polynomial $h' \in \Ryq[X]/(X^{2t} - 1)$ of degree at most $2t$ with coefficients:
+
+\begin{align}\label{eq:3.intt}
+    h'_j &= (2t)^{-1} \sum_{i=0}^{2t-1} h'(\omega_{2t}^i) \omega_{2t}^{-ij}  && \text{for}\ j = 0, \ldots, 2t-1 \\
+\end{align}
+
+To recover $h$ one needs to reduce $h'$ modulo $Y - X^t$ by changing a $X^t$ power of $X$ from the terms $H_j X^j$ with $j=t, \ldots, 2t-1$ into a $Y$. This is then absorbed in the corresponding coefficient $H_j \in \Ryq$ and the result is the polynomial $\Psi(h)$. The last step is to invert the mapping $\Psi$:
+
+\begin{align*}
+    \Psi^{-1} : (\Ryq)[X] / (Y - X^t) &\mapsto \Rnq \\
+    \Psi(h) = \sum_{i=0}^{t-1}(\sum_{j=0}^{n/t-1} f_{i,\ j} Y^j) X^i &\mapsto h = \sum_{k=0}^{n-1} f_{k \mod t,\ \left \lfloor{k/t}\right \rfloor } X^k
+\end{align*}
+
+Note that the multiplications in \cref{eq:3.mult} happen in $\Ryq$ so they are polynomial multiplications. Since $t$ is supposed to be small, these will remain expensive multiplications. In order to make this method fast, one can apply Kroneker substitution $SNEEZE$ operation to all the coefficients (these coefficients are polynomials in $\Ryq$) of $f'$ and $g'$, multiply each evaluation as in \cref{eq:3.mult}, apply $INTT_{2t}$ to retrieve $h'$ as in \cref{eq:3.intt} and then retrieve the polynomial coefficients of $h'$ with the $SNORT$ operation. The last part of the algorithm remains the same.

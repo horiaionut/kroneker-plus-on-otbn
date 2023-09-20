@@ -1,0 +1,82 @@
+\RequirePackage[l2tabu,orthodox]{nag}
+
+% TODO: decide if one-sided/two-sided
+%\documentclass[headsepline,footsepline,footinclude=false,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc,BCOR=12mm,DIV=12]{scrbook} % two-sided
+\documentclass[headsepline,footsepline,footinclude=false,oneside,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc]{scrbook} % one-sided
+
+\usepackage{amsmath}
+\usepackage{algorithm, setspace}
+\usepackage[noend]{algpseudocode}
+\usepackage{xcolor}
+\usepackage{pgf-pie}
+
+\usepackage{mathtools}
+
+
+% TODO: change citation style in settings
+\input{settings}
+
+\usepackage{cleveref}
+
+% TODO: change thesis information
+\newcommand*{\getUniversity}{Technische Universität München}
+\newcommand*{\getFaculty}{School of Computation, Information and Technology Informatics}
+\newcommand*{\getTitle}{Speeding-up Post-Quantum Cryptography on an RSA Co-Processor}
+\newcommand*{\getTitleGer}{Beschleunigung der Post-Quantum-Kryptographie auf einem RSA-Coprozessor}
+\newcommand*{\getAuthor}{Horia Ionut Turcuman}
+\newcommand*{\getDoctype}{Master's Thesis in Informatics}
+\newcommand*{\getSupervisor}{Prof. Dr. Claudia Eckert}
+\newcommand*{\getAdvisor}{Felix Fritz Oberhansl, Tobias Stelzer}
+\newcommand*{\getSubmissionDate}{19.09.2023}
+\newcommand*{\getSubmissionLocation}{Munich}
+
+\newcommand\todo[1]{\textcolor{red}{TODO: #1}}
+
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Zq}{\mathbb{Z}_q}
+\newcommand{\R}{\mathbb{Z}[X]/(X^n + 1)}
+\newcommand{\Rq}{\mathbb{Z}_q[X]}
+\newcommand{\Rnq}{\mathbb{Z}_q[X]/(X^n + 1)}
+\newcommand{\Ryq}{\mathbb{Z}_q[Y]/(Y^{n/t} + 1)}
+\newcommand{\Ryxq}{\mathbb{Z}_q[Y]/(Y^{n/t} + 1)[X]/(Y-X^t)}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+
+\begin{document}
+
+% Set page numbering to avoid "destination with the same identifier has been already used" warning for cover page.
+% (see https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Problems_with_Links_and_Pages).
+\pagenumbering{alph}
+\input{pages/cover}
+
+\frontmatter{}
+
+\input{pages/title}
+\input{pages/disclaimer}
+\input{pages/acknowledgments}
+\input{pages/abstract}
+\microtypesetup{protrusion=false}
+\tableofcontents{}
+\microtypesetup{protrusion=true}
+
+\mainmatter{}
+
+\input{chapters/01_introduction}
+\input{chapters/02_background}
+\input{chapters/03_nussbaumer}
+\input{chapters/04_kroneker+}
+\input{chapters/05_implementation}
+\input{chapters/06_analysis}
+\input{chapters/07_conclusion}
+% TODO: add more chapters here
+
+\appendix{}
+
+\microtypesetup{protrusion=false}
+% \listoffigures{}
+% \listoftables{}
+\microtypesetup{protrusion=true}
+\printbibliography{}
+
+\end{document}

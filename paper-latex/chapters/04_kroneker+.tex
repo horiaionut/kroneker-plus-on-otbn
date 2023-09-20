@@ -1,0 +1,99 @@
+\chapter{Kroneker+}\label{chapter:kroneker_plus}
+
+Kroneker+ \parencite{cryptoeprint:2020/1303} changes the Nussbaumer method such that it uses a negative-wrapped-convolution-based $NTT$ instead of a linear one. Through this change, only $t$ multiplications will be performed and only $t$ $t$-roots of unity are necessary. Therefore the requirement $t^2 | n$ relaxes to $t | n$. It also applies Kroneker substitution to speed up the multiplications.
+
+Kroneker+ starts by applying the mapping $\Psi$ to both $f$ and $g$ as defined in the Nussbaumer method. Next, a cyclic $NTT_t$ is applied to the coefficients of $\Psi(f)$ and $\Psi(g)$ (called $F_i$, $G_i$) considered together with a corresponding weight factor $X^i$ as bellow:
+
+\begin{equation*}
+    [F_0 X^0, \ldots, F_{t - 1} X^{t-1}] \mapsto [\sum_{i=0}^{t-1} \omega_t^{ij} F_i X^i]_j
+\end{equation*}
+
+One could note that:
+
+\begin{equation*}
+    \sum_{i=0}^{t-1} \omega_t^{ij} F_i X^i = \sum_{i=0}^{t-1} \omega_t^{ij} (\sum_{k=0}^{n/t-1} f_{i,\ k} Y^k) X^i = \sum_{i=0}^{n} \omega_t^{(i \mod t) j} f_i X^i = \sum_{i=0}^{n} \omega_t^{ij} f_i X^i = f(\omega_t^j X)
+\end{equation*}
+
+Therefore the application of $\Psi$ and of $NTT$ can be written as $[f(\omega_t^j X)]_j$ which is nice and will be used for laying down the mathematical details, but won't be used in the implementation since by merging the two steps one losses the speed provided by fast implementations of the $NTT$. Next we perform $t$ multiplications $h(\omega_t^j X) = f(\omega_t^j X) \cdot g(\omega_t^j X)$, invert the$NTT$, remove the weight factors $X^i$, perform an explicit reduction modulo $Y - X^t$ to remove powers of $X$ larger than $t-1$ and invert the mapping $\Psi$. The issue with this approach is that the polynomials $f(\omega_t^j X)$ lie in the polynomial ring $\Ryxq$ because $f$ is evaluated at $X$ yielding another polynomial in $X$. Simply computing $f \cdot g$ is equivalent to computing $\Psi^{-1}(\Psi(f) \cdot \Psi(g))$ which means only one multiplication in $\Ryxq$ is necessary instead of $t$. The advantages of this method shows up when it is combined with Kroneker substitution as shown bellow.
+
+To a polynomial $\Psi(f) = \sum_{i=0}^{t-1} F_i X^i$ one can apply Kroneker substitution with evaluation point $X \mapsto 2^{l/t}$ for some $l$ large enough such that $t|l$. In the polynomial ring $\Ryxq$ we have $Y = X^t \implies Y \mapsto 2^l$ and $\omega_t = Y^{2n/t^2} \implies \omega_t \mapsto 2^{2ln/t^2}$. This defines the following mapping:
+
+\begin{align*}
+    \Ryxq &\mapsto \mathbb{Z} / (2^ln/t + 1) \\
+    \sum_{i=0}^{t-1} F_i(Y) X^i &\mapsto \sum_{i=0}^{t-1} F_i(2^l) \cdot 2^{il/t}
+\end{align*}
+
+The terms that need to be multiplied, namely $f(\omega_t^j X)$, evaluate to $f(2^{2jln/t^2} \cdot 2^{l/t})$, hence we end up with $t$ multiplications in $\mathbb{Z} / (2^ln/t + 1)$. It means that we have $t$ multiplications of $ln/t + 1$ bits to perform instead of a single one of $ln$ bits as if one was to directly apply Kroneker substitution to the input polynomials and not use the $\Psi$ mapping. The Kroneker+ method is summarized in \cref{alg:kroneker_plus} from the original description \parencite{cryptoeprint:2020/1303}. 
+
+\begin{algorithm}
+    \setstretch{1.3}
+    \caption{Kroneker+}
+    \label{alg:kroneker_plus}
+    \begin{algorithmic}[1]
+    
+    \Procedure{Kroneker+}{$f, g \in \Rnq$, $l,\ t$ s.t. $t|l$, $t|n$}
+  
+        \State $f' = \Psi(f), g'= \Psi(g) \in \Ryxq$
+  
+        \State $M_i = 2^{2iln/t^2} \cdot 2^{l/t}$ \Comment{for $i = 0, \ldots, t-1$}
+  
+        \State Compute $f'(M_i)$, $g'(M_i)$ \Comment{for $i = 0, \ldots, t-1$}
+  
+        \State $h(M_i) = f'(M_i) \cdot g'(M_i) \mod 2^{ln/t} + 1$ \Comment{for $i = 0, \ldots, t-1$}
+  
+        \State $h_i = (2^{il/t})^{-1} \cdot t^{-1} \sum_{j=0}^{t-1} (2^{-2ln/t^2})^{ij} h(M_i)$ \Comment{for $i = 0, \ldots, t-1$}
+    
+        \State Recover $h_{i + tj}$ as the j-th l-bit limb of $h^i$ \Comment{for $i = 0, \ldots, t-1$ and $j = 0, \ldots, n/t-1$}
+  
+    \EndProcedure
+    
+    \end{algorithmic}
+  \end{algorithm}
+
+Line 3 represents the application of $\Psi$ combined with the $SNORT$ operation of Kroneker substitution and the forward $NTT$. Line 4 shows the $t$ multiplication in $NTT$-Kroneker domain $\mathbb{Z} / (2^ln/t + 1)$. Line 5 combines the inverse $NTT$ with removal of the weight factors $X^i = 2^{il/t}$. Lastly, line 6 performs both the $SNEEZE$ operation as well as inverses $\Psi$ by placing $l$-bit chunks where they originally had to be. With a few additional tweaks, this structure turns out to be appropriate for implementation hence it will be followed. The original source paper \parencite{cryptoeprint:2020/1303} elaborates on complexity, running time as well as a few other theoretical aspects that for our purposes can be omitted. It is important to note that the overall time complexity comes from the $NTT$s and it is $\mathcal{O}(n \log n)$. Further implementation details will be presented in chapter \ref{chapter:implementation}.
+
+
+
+% old
+
+% \subsubsection{An alternative perspective on the$NTT$}
+
+% \begin{theorem}[Chinese remainder theorem]
+%     Let $I_1$, $\dots$, $I_n$ be two-sided ideals over a ring $R$, and let $I$ be their intersection. If the ideals are pairwise co-prime, the following isomorphism $\pi$ exists:
+
+%     \begin{align*}
+%        R/I &\cong (R/I_{1})\times \cdots \times (R/I_{n}) \\
+%         x\ {\bmod\ {I}} &\mapsto (x\ {\bmod\ {I}}_{1},\,\ldots ,\,x\ {\bmod\ {I}}_{n})
+%     \end{align*}
+
+% \end{theorem}
+
+% Since $\pi$ is an isomorphism, multiplication of $f, g \in R/I$ can be computed via multiplication in the second domain $\prod_{i=0}^{n-1} R/I_i$ by individually computing the product $\pi(f) \cdot \pi(g)$ and mapping the result back:
+
+% \begin{equation*}
+%     f \cdot g = \pi^{-1}(\pi(f) \cdot \pi(g))
+% \end{equation*}
+
+% In the concrete setting of Dilithium ($R = R_q^n$) a set of suitable ideals can be constructed with the aid of a principal $n$-root of unity $\omega$ in $\Z_q^*$. Such a root exists if $n | (q - 1)$, and the ideals are chosen to be $I_1 = \Rq/(X - \omega^0) \ldots I_k = \Rq/(X - \omega^{n - 1})$. Reducing a polynomial $f \in R_q^n$ by $X - \omega^{i}$ for some $i$ amounts to setting $X = \omega^i$ for all $X$'s and powers of $X$ in $f$, i.e. computing $f(\omega^{2i - 1})$. We therefore have:
+
+% \begin{align*}
+%     R_q^n &\cong \prod_{i=0}^{n-1} \Rq/(X-\omega^{i}) \\
+%      f &\mapsto (p_0 = f(\omega^0), p_1 = f(\omega^1), \ldots, p_{n-1} = f(\omega^{n-1}))
+% \end{align*}
+
+% The inverse mapping can be computed by constructing the polynomial $p = \sum_{i=0}^{n-1} p_i X^i$ and evaluating it at powers of the inverse of the unity root, multiplying in the end by the inverse of $n$ in $\Zq$. The inverse looks like:
+
+% \begin{equation*}
+%     p \mapsto n^{-1} \cdot (f_0 = p(\omega^{-0}), f_1 = f(\omega^{-1}), \ldots, f_{n-1} = p(\omega^{-(n-1)}))
+% \end{equation*}
+
+% The isomorphism $\pi$ and it's inverse can be written in a more common way:
+
+% \begin{align*}
+%     p_k &= \sum_{i=0}^{n-1} f_i \cdot \omega^{ik} \\
+%     f_i &= n^{-1} \cdot \sum_{k=0}^{n-1} p_k \cdot \omega^{-ki}
+% \end{align*}
+
+
+
+% The expensive polynomial multiplication turns into $n$ cheap multiplications, each in one of the domains $\Rq/(X-\omega^{2i - 1})$. To the running the application of $\pi$ and it's inverse are added, each of complexity $\mathcal{O}(n^2)$ (each sum takes $\mathcal{O}(n)$ operations and there are $n$ sums). This is no improvement over the plain polynomial multiplication which also has complexity $\mathcal{O}(n^2)$, but fortunately there exist algorithms that can compute $\pi$ and it's inverse in $\mathcal{O}(n \log(n))$ steps, hence the overall complexity is just $\mathcal{O}(n \log(n))$. Careful implementations of achieve significant running time improvements, hence these algorithms have become standard and are widely used in practice.

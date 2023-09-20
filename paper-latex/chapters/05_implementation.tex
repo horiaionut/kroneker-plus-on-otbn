@@ -1,0 +1,345 @@
+
+\chapter{Implementation}\label{chapter:implementation}
+
+This chapter is dedicated to the OTBN-specific implementation of the Kroneker+ algorithm. The implementation is the main contribution of this work and it provides a relatively fast way to multiply polynomials in the context of the Dilithium scheme on the OTBN co-processor. Different parameter choices and tweaks to the code can make it work for polynomials of other schemes, hence this can also stand as a starting point for adapting other cryptographic schemes to the OTBN processor.
+
+The chapter starts by discussing and picking a suitable parameter set. It continues by going step by step through the code and explaining which part of the Kroneker algorithm each step handles, provides implementation details pointing out at the same time challenges and solutions that were encountered and developed during the development process. Some of these challenges come from the fact that the instruct set did not always provide the necessary instruction for some manipulations, others are simply optimization steps that save data-memory read/write instructions. Other potential optimizations are discussed in the further work section.
+
+\section{Parameter Choice}
+
+To be able to provide an efficient implementation, one needs to fix a set of parameters to work with since a code that handles arbitrary parameters would unavoidably make extra steps to deal with the uncertainty. The Dilithium scheme already fixes a few parameters as the polynomial degree $n = 256$ and the coefficient ring $\Zq$ with $q = 2^{23} - 2^{13} + 1$. The bottleneck in Dilithium is the matrix-vector multiplication of a matrix of polynomials $A \in (\Rnq)^{m \times k}$ and a vector $v \in S_{q, \lambda}^k = \{w \in \Rnq$ s.t. $0 \leq w_i < \lambda\}^k$. The polynomial coefficients are all assumed to be positive. Indeed, since the generation of the polynomials in $A$ and $v$ needs to be reconsidered when attempting to tweak the polynomial multiplication in Dilithium, the coefficients can be generated in the positive range. One needs to multiply and accumulate $k$ pairs of polynomials $h = \sum_{j=0}^{k-1} a_{ij} \cdot v_j$. To save from converting each resulting polynomial separately back from NTT-Kroneker domain, one may want to accumulate them in this domain and convert back to the polynomial form only the accumulated result.
+
+Given the restriction $t|n$, and since $n$ is a power of two, one is limited to the choice of a power of 2 for the Nussbaumer parameter $t$. Recall that $l$ only depends on bounds on the resulting polynomial coefficients and not on the modulus polynomial $X^n + 1$. The coefficients of the polynomials $a_{ij}$ are in $[0, q - 1]$. The product of a coefficient of $a_{ij}$ and one of $v_j$ is in $[0, (q - 1) \cdot \lambda]$. Each coefficient of the product $a_{ij} \cdot v_j$ is a sum of $n$ numbers in the aforementioned interval and the coefficients of the resulting sum $\sum_{j=0}^{k-1} a_{ij} \cdot v_j$ will be in the interval $[0, (q - 1) \lambda n k]$. We then need to set:
+
+\begin{equation*}
+    l > \log_2((q - 1) \lambda n k + 1) = \log_2((8380416) \cdot 523776 \cdot 256 \cdot 5 + 1) \approx 52.3
+\end{equation*}
+
+At this point it is important to note that a power of 2 value for $l$ would make a couple of steps in the algorithm such as the $SNEEZE$ and $SNORT$ operations faster and easier to implement since the register widths and the allowed pointers for read and write operations in data memory are all powers of two. Furthermore, instructions are build to work with either 32-bit, 64-bit or 256-bit numbers and not working with one of these widths makes handling numbers cumbersome. The original Kroneker+ paper found the value of $t=8$ to be the best for Saber \parencite{10.1007/978-3-030-57808-4_21}, hence we would like to use a similar $t$. One the other hand, very large numbers will result in too large multiplications and the benefits of the algorithm will be lost. A priori, with these considerations in mind, the choice $l=64$ and $t=8$ seems to be most suitable, hence this is what is chosen for the implementation.
+
+Table \ref{tab:parameter-choice} shows a couple of different choices for $l$ and $t$ that one could consider and the resulting unity roots and number widths in bits.
+
+
+\begin{table}[htpb]
+    \caption[]{}\label{tab:parameter-choice}
+    \centering
+    \begin{tabular}{l l l l l}
+      \toprule
+         & l & t & $\omega_{2t} = 2^{2ln/t^2}$ & $width = ln/t + 1$ \\
+      \midrule
+         & 54 & 2  & $2^{6912}$ & 6913 \\
+         & 56 & 4  & $2^{1792}$ & 3585 \\
+         & 56 & 8  & $2^{448}$ & 1793 \\
+         & 64 & 4  & $2^{2048}$ & 4097 \\
+         & 64 & 8  & $2^{512}$  & 2049 \\
+         & 64 & 16 & $2^{128}$  & 1025 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  
+\section{Representation and Basic Operations in the Polynomial Domain}
+
+While explaining the implementation details it is beneficial to differentiate between operations and representations of polynomials in the usual polynomial domain $\Rnq$ and the NTT domain. Understanding which in which domain a certain operation is applied can provide extra intuition and will make the mapping between the high level pseudocode from \cref{alg:kroneker_plus} and the actual implementation clearer. This section starts to present polynomial representation in polynomial domain (and with that the input representation) and the main operation performed in this domain, namely the modulo q operation. The next section lists a couple of arithmetic operations and describes the polynomial representation in the Kroneker+ and NTT domain. Finally, the last section will only point out where the issues presented here show up in order to maintain a higher level view on the algorithm steps.
+
+\subsection{Polynomial Representation}
+
+To establish a representation for polynomials in $\Rq/(X^{256} + 1)$, it is of use to look at their coefficients. These are numbers modulo $q = 2^{23} - 2^{13} + 1$ hence they could be represented on 23 bits per number. Sine the loading and storing of bits from the data memory does not work on arbitrary positions and with arbitrary widths, working with width 23 would be cumbersome and would require plenty of additional operations to extract the numbers separately. Fortunately, the i/o operations are designed to work on 32-bit widths and with memory locations multiples of 32, hence these operations become trivial when using a length of 32 bits. To represent a polynomial in this way, it's coefficients will be stored consecutively in an array of 256 numbers each of 32 bits long. This array is stored in the memory on $256 \cdot 32$ bits, each chunk of 32 representing one number. The first coefficient will be stored in the first array position, namely the lowest data memory location and the others will come in order after it. This is both an efficient and a natural representation and for these reasons it is chosen here.
+
+\subsection{Modulo reduction by q}
+
+Modulo reduction by q is performed only at the end of the algorithm to obtain the final result. The numbers that need to be reduced by q are at most 64 bits long, hence they are stored on only one WDR. There exists an instruction that performs modulo arithmetic (called $bn.addm$) but it has a restriction: the result of the addition before reduction needs to be less than $2 \cdot q$, but the numbers at hand are larger than that and so it is not possible to use this instruction. There is also no division instruction. Furthermore, the running time of the modulo reduction operation is very important for the total running time of the algorithm because it is executed for each of the 256 output coefficients, i.e. many times. There exist a couple of algorithms that perform modulo reduction efficiently: Barret Reduction ~\parencite{4272869}, Reduction by a Solinas Prime ~\parencite{Solinas2011} and Reciprocal Multiplication ~\parencite{reciprocal}. A Solinas Prime is a low degree polynomial with small integer coefficients that   Both the Barret Reduction and the Reduction by a Solinas Prime algorithms assume that the number to be reduced is less than the $q^2$, which is not the case in the current setting. The Reciprocal Multiplication method is then implemented due to it's ease of implementation and low number of instructions.
+
+The Reciprocal Multiplication Method starts from rewriting the modular reduction as: $x \mod q = x - q \cdot \lfloor x / q \rfloor$. Since the is no division instruction, instead of dividing by q one can imagine that $x$ is multiplied by $1/q$. The same way $1/q$ has a base 10 point representation (e.x. $0.234\ldots$), it also has a (possibly infinite) base 2 point representation. \cref{alg:base2rep} prints this representation:
+
+\begin{algorithm}
+  \caption{Base 10 point representation to base 2 point representation}
+  \label{alg:base2rep}
+  \begin{algorithmic}[1]
+  
+  \Procedure{Base2Representation}{$n < 1$}
+
+      \State S = \{\} (a set)
+      \State R = "." (binary representation)
+
+      \While $n \notin S$
+
+        \State insert n into s
+        \State $n = 2 \cdot n$
+        \State append $\lfloor n \rfloor$ to R
+        \State $n = n - \lfloor n \rfloor$
+
+      \EndWhile
+
+      \Return R
+  
+  \EndProcedure
+  
+  \end{algorithmic}
+\end{algorithm}
+
+Converting $1/q = 1.1932580443192743e-07$ to binary we obtain a finite representation:
+
+\begin{align*}
+  1/q =\ 0.&0000000000000000000000100000000010000000000111000000011\\
+        &0000000010100100001000000000000000000000000000000000000\\
+        &0000000000000000000000000000000000000000000000000000000\\
+        &0000000000000000000000000000000000000000000000000000000\\
+        &000000000000000000000000000000000000\ (256\ bits)
+\end{align*}
+
+Since this number is has a decimal part, one could shift it to the left, remember the fact that it has been shifted. What is important to note is that $x \cdot 1/q = ((1/q \ll s) \cdot x) \gg s$ when bits that go after the '.' when performing a right shift, are not discarded but also represented. Further more, it also holds that $\lfloor x \cdot 1/q \rfloor = \lfloor ((1/q \ll s) \cdot x) \gg s \rfloor$, i.e. their integral parts are equal. In the implementation, the value $s = 86$ is chosen such that the binary representation of $1/q \ll 86$ does not contain any 1 in the right side of the $'.'$ and such that it's left-most 1 is in the 64th place left to the $'.'$ which makes the multiplication easy since the multiplier can multiply only 64-bit long chunks. What is left is to multiply the obtained value by q and subtract it from the original number x. The full computation is as follows:
+
+\begin{equation*}
+  x \mod q = x - q \cdot (((1/q \ll 86) \cdot x) \gg 86)
+\end{equation*}
+
+\section{Representation and Basic Operations in the Kronecker+ Domain}
+
+In Kroneker+ domain and the NTT domain, polynomials become arrays of very large numbers that are cumbersome to work with since they can not be stored on a single 256-bit WDR and instructions for numbers of multiple WDRs long do not exist. It is therefore required that operations are manually implemented which turns out to be beneficial in some cases when smart optimizations can be implemented. We start be explaining the representation, continue with modulo $2^{2048} + 1$ reduction which is one of most applied operation, and present addition and subtraction in the end.
+
+\subsection{Polynomial Representation}
+
+After reducing the polynomial degree and applying Kroneker substitution, the input polynomials have a degree $t=8$ and their coefficients are large numbers modulo $2^{2048} + 1$ which can not be stored in only one 256-bit long register. \cref{steps:1} explains in detail how this modulo was computed but the aim for now is to establish some conventions about the way these large numbers are stored and handled. Unfortunately, $8 \cdot 256 = 2048$ bits are still not enough to store $2^{2048} + 1$ numbers so an extra bit is needed resulting in numbers of 2049 bits long. Since in the data memory one can only index positions of multiples of 32, and since further steps need to be able to load these numbers into 256-bit registers, using a number of bits that is multiple of 256 is the only option. The numbers are therefore stored on 9 WDRs $ \cdot 256$ bits each $= 2304$ bits, the last 255 bits being 0 in the modulo reduced form. Furthermore, instructions are designed for numbers stored in only one WDR and so all operations such as shift, addition, multiplication for these 9 WDRs long numbers need to be manually implemented building up on the existent instructions. 
+
+As it will be presented in section \ref{steps:1}, applying the Nussbaumer degree reduction mapping and Kroneker substitution with parameter $t=8$ results in $8$ such large numbers for each of the two input polynomials $\implies 9 \cdot 8 \cdot 2 = 144$ WDRs needed to store all of them at once, which is much more than the $32$ available WDRs. It is therefore necessary to store the numbers in data memory and load them as needed, every time an operation is performed. The 9 WDRs long numbers will be stored in the data memory and in registers in such a way that the higher the data memory position or the register index, the more significant are the bits. For instance, what is meant by referring to the 9th WDR of a number or by the WDR $w_8$ of a number stored on the WDRs $w_0, \ldots, w_8$ is the top-most, most significant 256 bits.
+
+
+\subsection{Modulo reduction by $2^{2048} + 1$}
+
+Since OTBN instructions work only on one or 2 WDRs, there is no modulo reduction instruction by a large number such as $2^{2048} + 1$. As proposed in the original Kroneker+ paper \parencite{cryptoeprint:2020/1303} in section 3.3.3 to modulo reduce efficiently by $2^{2048} + 1$, it is important to note that $2^{2048} = -1 \mod (2^{2048} + 1)$, hence, to reduce a 9-WDRs number (saved for instance in $w_8, \ldots, w_0$ with $w_8$ the most significant WDR) modulo $2^{2048} + 1$ it suffices to subtract $w_8$ from the number formed by the remaining 8 WDRs. This subtraction can be achieved by performing one by one the following operations: $w'_0 = w_0 - w_8$ and $b_0$ is the burrow that may result, $w'_1 = w_1 - b_0$ and call the burrow $b_1$, $\ldots$, $w'_7 = w'_7 - b_6$ and call the burrow $b_7$. The last burrow, if it is 1, it would represent $-2^{2048}$ which equals $1 \mod (2^{2048} + 1)$ and would need to be added to the number by performing $w'_0 = w'_0 + b_7$ and resulting carry $c_0$, $\ldots$, $w'_7 = w'_7 + c_6$ and resulting carry $c_7$. As a last step one needs to set the $w'_8 = c_7$. The borrows and carries can only be 0 or 1, and $c_7 = 1$ if and only if all registers $w'_0, \ldots, w'_7$ are 0. The number has therefore been successfully reduced and the result either has all upper 256 bits equal to 0 or it is the number $2^{2048}$ which in binary is exactly one 1 on the 2049th bit, all other bits being 0. 
+
+Note that half of the operations are performed exclusively to propagate the carries which almost always become 0 along the way and there won't be anything to propagate. In fact, the only case when one obtains a $c_7 = 1$ is when all bits of registers $w_0, \ldots, w_7$ are 1 and $b_7 = 1$. There are $256 \cdot 8 = 2048$ bits, $2^{2048}$ configurations, and so the chance that they are all set is $1 / 2^{2048}$! Many of these operations are therefore almost always wasteful.
+
+To reduce the number of modulus operations, and increase the running time in this way, the implementation uses internally in many places the convention that from one step to the next and when numbers are stored into the data memory, they do not necessarily have to be reduced to the canonical equivalent value, but might be kept in any equivalent representation modulo $2^{2048} + 1$ as long as they have the top most 198 bits 0. These extra bits are exactly one quarter (64 bits) of a WDR mostly because the multiplier is only 64 bits wide and this extra quarter still needs to be taken into account during multiplication anyway. In isolated cases, when arithmetic operations are performed back to back without storage in the data memory, this convention can be shortly violated to even further minimize the number of operations. In these cases, numbers will be stored in equivalent multiplications on more than $2048 + 198$ bits. The whole chain of operations will be limited to one of the 7 algorithm's steps and will end with a modulo reduction before writing the result back to data memory. This way of dealing with the number's representation leads to exactly the same result as if one was to perform modulo reductions after every single arithmetic operation and is chosen solely for reducing the running time. 
+
+When the consensus about large number representation is ignored, the modulo reduction can still be applied. The extra WDRs that form the number need to be subtracted (or added) at the proper location, for instance, after the first subtraction $w'_0 = w_0 - w_8$, one would continue by subtracting $w'_1 = w_1 - w_9 - b_0$ and so on. Depending on how many WDRs form the number, some of them might need to be added at the next wrap around.
+
+
+\subsection{Arithmetic Operations}
+
+\subsubsection{Addition}
+
+Addition of two 9 WDR long numbers can be implemented manually by setting $w''_0 = w_0 + w'_0$ and carry $c_1$, $w''_1 = w_1 + w'_1 + c_1$ and carry $c_2$, $\ldots, w''_8 = w_8 + w'_8 + c_7$ and there is no carry left if only the first 64 bits of $w_8$ and $w'_8$ have been used. The individual additions of two WDRS is performed using the $BN.ADD$ instructions which aside from setting the result toa register also set a carry flag that can be then taken into account using the $BN.ADDC$ instruction.
+
+If the addition terms are in the reduced form, $w_8, w'_8$ will be at most 1, hence $w''_8$ is at most 2, and the result might not be in the reduced form. Depending on the following processing operation that the result undergoes, a modulo reduction will be applied or not. For instance, intermediate results of multiple additions $n_1 + n_2 + \ldots + n_k$, i.e $n_1 + n_2$, $n_1 + n_2 + n_3$, $\ldots$ need not be modulo reduced since these intermediate results will be less than $2^{2048 + 64} = 2^{2112}$ so they have less than the first 64 bits of their last WDR set to 1. Reducing every intermediate result would be wasteful in this case.
+
+If the addition terms are on the other hand not in the modulo reduced form, more than the first 64 bits of $w''_8$ could be set and the assumption about the way numbers are stored would be invalidated. In that case one needs to apply a modulo reduction. In isolated cases the addition terms do not respect the assumption and one or both numbers may span more than 9 WDRs. This happens for instance after a shift of a couple of WDRs that has not been followed by a modulo reduction. When that is the case, after performing $w''_8 = w_8 + w'_8 + c_7$, the addition needs to continue for a couple more WDRs and, when reducing the result, the reduction needs to consider these extra WDRs as well.
+
+\subsubsection{Subtraction}
+
+Subtraction is a comparatively more complex operation than addition and it requires more instructions. Similar to addition, there is a $BN.SUB$ and a $BN.SUBB$ instruction that set a burrow flag that is taken into account by the second instruction. What is interesting and helpful in some scenarios is that the burrow and the carry flags are actually the same. This helps when wrapping around the carry with inverted sign which is needed for modulo reduction for instance. The subtraction starts in a similar way as addition does, by performing $w''_0 = w_0 - w'_0$ and burrow $b_0$, $w''_1 = w_1 - w'_1 - b_0$ and burrow $b_1$, $\ldots, w''_7 = w_7 - w'_7 - b_6$ and burrow $b_7$. Since $w_8$ could be smaller than $w'_8 + b_7$, performing the next subtraction can result in another burrow which then needs to be handled. Instead of doing that, the computation can wrap around and perform $w''_0 = w''_0 + w'_8 + b_6$ and carry $c_0$, $w''_1 = w''_1 + c_0$ and carry $c_1$, $\ldots$, $w''_7 = w''_7 + c_6$ and carry $c_7$. The carry can now be added with $w_8$ to the result ($w''_8 = w_8 + c_7$) or a modulo reduction, i.e. two wraparounds, can be used to arrive at the modulo reduced form. The only requirement is that $c_7$ is added or subtracted accordingly. As with addition, if in one special case the subtraction terms are larger  than 9 WDRs, a more complex subtraction that takes care of the extra WDRs is necessary.
+
+
+\section{Kroneker+ Steps}
+
+The implementation steps exactly map to the Kroneker+ algorithm. For reference, it's high-level pseudocode is given here again:
+
+\begin{algorithm}
+  \setstretch{1.3}
+  \caption{Kroneker+}
+  \begin{algorithmic}[1]
+  
+  \Procedure{Kroneker+}{$f, g \in \Rnq$, $l,\ t$ s.t. $t|l$, $t|n$}
+
+      \State $f' = \Psi(f), g'= \Psi(g) \in \Ryxq$
+
+      \State $M_i = 2^{2iln/t^2} \cdot 2^{l/t}$ \Comment{for $i = 0, \ldots, t-1$}
+
+      \State Compute $f'(M_i)$, $g'(M_i)$ \Comment{for $i = 0, \ldots, t-1$}
+
+      \State $h(M_i) = f'(M_i) \cdot g'(M_i) \mod 2^{ln/t} + 1$ \Comment{for $i = 0, \ldots, t-1$}
+
+      \State $h_i = (2^{il/t})^{-1} \cdot t^{-1} \sum_{j=0}^{t-1} (2^{-2ln/t^2})^{ij} h(M_i)$ \Comment{for $i = 0, \ldots, t-1$}
+  
+      \State Recover $h_{i + tj}$ as the j-th l-bit limb of $h^i$ \Comment{for $i = 0, \ldots, t-1$ and $j = 0, \ldots, n/t-1$}
+
+  \EndProcedure
+  
+  \end{algorithmic}
+\end{algorithm}
+
+\subsection{Step 1: Reorder coefficients and SNORT} \label{steps:1}
+
+The input to the first step consists of two polynomials in $\Rq/(X^{256} + 1)$, represented in the data memory as arrays of 256 32-bit numbers, each number being one coefficient. The polynomials are handled individually and the application of the mapping $\Psi$ and the $SNORT$ operation are combined and applied together to save reads and writes to the data memory and to also simplify the implementation. Since $t = 8$, the application of $\Psi$ will split a list of 256 coefficients into 8 smaller lists of 32 coefficients. $SNORT$ing each of these smaller lists using $l=64$, i.e. padding each 32-bit coefficient with 32 0's and appending their binary representation, will results in 8 numbers of $32 \cdot 64 = 2048$ bits each. Since these numbers are $SNORT$ed elements of the ring $\Ryq$ and $SNORT$ maps $Y$ to $2^l = 2^{64}$, all operations on them need to be performed modulo $(2^{(256 / 8)})^{64} + 1 = 2^{32 \cdot 64} + 1 = 2^{2048} + 1$. Algorithm \ref{alg:step1} gives a high-level view on the step.
+
+\begin{algorithm}[h]
+  \setstretch{1.3}
+  \caption{Reorder coefficients and SNORT}
+  \label{alg:step1}
+  \begin{algorithmic}[1]
+
+  \Procedure{Reorder \& SNORT}{$polynomial\_dmem\_location$}
+
+      \State $no\_bits\_per\_coeff = 9 \cdot 256$
+
+      \State start = [$random\_free\_dmem\_location$($8 \cdot no\_bits\_per\_coeff$)]
+
+      \State $current\_location = start$
+
+      \For {$i = 0$; $i < 32$; $i$ ++}
+        \State $p = current\_location$
+
+        \For {$j = 0$; $j < 8$; $j$ ++}
+          \State $coeff = load_{32}(polynomial\_dmem\_location)$ \Comment{load next coefficient}
+
+          \State $store_{32}(coeff, $p$)$ \Comment{store it a the right location to reorder}
+
+          \State $p += no\_bits\_per\_coeff$
+          \State $polynomial\_dmem\_location$ += $32$
+        
+        \EndFor
+
+        \State $current\_location$ += $32$ \Comment{leave 32 bits to 0 to SNORT}
+      \EndFor
+
+      \Return start
+
+      \State 
+
+  \EndProcedure
+
+  \end{algorithmic}
+\end{algorithm}
+
+
+To implement the step, 8 data memory position are chosen for the binary representation of the final numbers. Groups of $8$ consecutive coefficients are loaded and their binary representations are appended to a corresponding positions in the data memory. After distributing a group of $8$ coefficients like that, 32 zeros are appended to all 8 final number in order to perform the $SNORT$ operation. This is possible since both the number of bits in the initial representation of coefficients and $l$ are multiples of 32. Using for instance $l=56$ would mean that coefficients need to be stored at locations multiples of 56 in the data memory but the store operation only works with locations multiples of 32. A workaround for this issue could be implemented but that would greatly increase the complexity of the code and the running time of the algorithm. 
+
+
+\subsection{Step 2: Multiplication by weights $X^i$}
+
+At this point, each of the 8 numbers needs to be multiplied by a corresponding weight $X^i = 2^{i l/t} = 2^{8i}$ where $i$ indexes the numbers. The results can become larger than the modulus $2^{2048} + 1$, but since the largest weight $2^{8 \cdot 8} = 2^{64}$, they will have at least the top $256 - 64 = 198$ bits still equal to 0. The numbers are read one by one and shifted by appropriate amounts. The results are not modulo reduced since the next step can work with them in the current form. Since it is not possible to shift by a variable amount, the shifting operations needs to be implemented separately for each of the 8 weights.
+
+To avoid the shifts at the step one might say that the implementation of the next step could take the shift into account when loading the numbers the first time from data memory. This is unfortunately not possible and inconvenient for two reasons. First, the shifts are small, they are not multiples of 256 so that the actual shifting could be replaced by skipping some WDRs when loading the number. For this reason the actual shifting operation still needs to be performed. One might argue that this shift could be performed at the same time with the first shift from the next step, y shifting by a larger amount. While this is true, it is inconvenient because the numbers at the first phase of step 3 are shifted by different amounts, some not being shifted at all, and because the same shifting functions are reused during the multiple phases of the butterfly transformation. To be able to integrate the shifts by the weights $X^i$, one would need to fully separated the implementation of the first phase from  the others and the code would become more longer and more complex and not very natural. For these reasons, this step and step 6 are separated from the butterfly, though to better understand the potential gains of integrating them further investigation is needed.
+
+
+\subsection{Step 3: Forward Butterfly}
+
+The implementation of the forward butterfly closely follows \cref{alg:IterativeCTno-bo}. The first two for-loops are rolled out, i.e. instead of the for-loops, the instructions in each iteration are written separately. This is necessary since each iteration needs to use different powers of the unity roots. While it is possible to store the roots that need to be used in the data memory in order to load and use them, this would require interactions with the data memory which are slow. The for-loops consist of a couple of iterations and it is not an issue to roll them out since even if the code size is increased, it is not increased by a very large amount. It is also quite convenient to do so since a couple of other constants need be changed every iteration and since there is no indexing possibility one would need to compute them. 
+
+The last for-loop is not rolled out since it's implementation turns out to be long and since each of it's iterations depend on the constants set in the above loops and one and it is easier to compute the right indexes and memory locations than to directly set them in this case. Coefficients are loaded from corresponding memory locations that are computed each iteration. The second number needs to be multiplied by a specified power of unity root, i.e. shifted by a specific number of WDRs since the $t$ proper unity root is $2^{512}$ meaning two register. To reduce the number of operations, the second number is loaded in such a way that the shift is already performed, by loading at a later register and performing a modulo reduction. The addition and subtraction in the butterfly operation incorporate the modulo reduction operation to save instructions. 
+
+The results of each iteration of the 3rd for-loop would be outputted in the modulo reduced form. This is necessary since by shifting with powers unity roots the numbers become much larger than 9 WDRs and can not be stored back in the data memory or used by a latter step of the forward butterfly which assumes that number are represented on $8 \cdot 256 + 64$ bits.
+
+
+\subsection{Step 4: Multiplication}
+
+In this step two arrays of 8 numbers of $8 \cdot 256 + 64$ bits need to be pointwise multiplied and modulo reduced. Since the only available multiplication instruction works on chunks of 64 bits, the multiplication of 2 of these long numbers consists of many multiplications of 64-bit chunks, more exactly, each 64-bit chunk from the first number needs to be multiplied with each of the 64-bit chunk from the second number. The results of these small multiplications need to be shifted by appropriate amounts and added together. This is implemented by saving the results at appropriate WDRs. The modulo reduction operation is performed at the same time with the multiplication due to the limited number of WDRs.
+
+The multiplication result before modular reduction will be:
+
+\begin{align*}
+  w''_i &= \sum_{k=0}^{i} ((w_k \cdot w'_{i - k}) \mod 256) + \sum_{k=0}^{i-1} \lfloor (w_k \cdot w'_{i - 1 - k}) / 256 \rfloor && i \in \{0, \ldots, 16\}
+\end{align*}
+
+Since multiplication works on chunks of 64, one needs to regard the numbers as chunks of 64 instead of WDRs. Calling these $c_i$, and knowing that the numbers will be represented on $4 \cdot 8 + 1 = 33$ such chunks, the product becomes:
+
+\begin{align*}
+  c''_i &= \sum_{k=0}^{i} ((c_k \cdot c'_{i - k}) \mod 64) + \sum_{k=0}^{i-1} \lfloor (c_k \cdot c'_{i - 1 - k}) / 64 \rfloor && i \in \{0, \ldots, 64\}
+\end{align*}
+
+The multiplication instruction is able to shift and accumulate multiplication results as well as to save a 128-bit chunk from the 256-bit accumulator to a WDR and shift the accumulator. Multiplications are performed for two consecutive $i$'s, those for the second one being shifted by 64 bits, and they are all accumulated. After performing these operations for two consecutive chunks of the result (i, i+1) , the lower 128 bits of the accumulator contain the two chunks $c''_i$ and $c''_{i+1}$ and can be saved to a WDR to form the final number. After saving the accumulator is shifted left by 128 bits and the multiplication continues for the next chunks, i.e. $i + 2$, $i + 3$. One needs to make sure to save the 128 bits to the correct (lower or upper) half of the current WDR that is filled to form the result. Writing $i = 4 \cdot j + r$ with $0 \leq r < 4$, the result for the chunks $4 \cdot j + 0, 4 \cdot j + 1$ will be saved to lower halves of their corresponding WDR, while $4 \cdot j + 2, 4 \cdot j + 3$ will be saved to corresponding upper halves. 
+
+
+\subsection{Step 5: Backward Butterfly}
+
+The implementation of the backward butterfly closely follows the inverse NTT version of \cref{alg:IterativeCTNTT}. In the same way as the forward transformation, the first two for-loops are rolled out, utilitarian constants are set at each iterations pointing to memory locations and containing shift values and other necessary numbers. A difference is that the inverse of powers of unity roots are used, which are actually again unity roots but of larger powers, shifts of up to 14 WDRs being necessary. The multiplication by $t^{-1}$ is deferred to the next step such that additional read/write operations are not necessary.
+
+\subsection{Step 6: Multiplication by inverse weights $X^{-i}$ and $t^{-1}$}
+
+Each of the resulting $8$ numbers need to be multiplied by $t^{-1}$ to finish the inverse NTT operation. Multiplication by $t^{-1}$ means multiplication with $t^{-1} = 8^{-1} = 2^{2047} + 2^{2046} + 2^{2045} + 1 \mod (2^{2048} + 1)$. This number, represented on 9 WDRs would have only the first 2 bits of the 8th WDR and the first bit of the first WDR set. Many of it's 64 bit chunks are entirely 0 so a full multiplication by this number would be wasteful. Instead, one could multiply the top 64 bits of the 8th WDR with the multiplier and add the multiplier to this number. This is a significant optimization since multiplication of large numbers is very expensive.
+
+Inspecting the terms $X^{-i} \mod 2^{2048} + 1$ something interesting can be observed:
+
+\begin{table*}[htpb]
+    \caption[]{}
+    \centering
+    \begin{tabular}{l l l}
+      \toprule
+      \midrule
+         $X^{-0}$ & $(2^8)^{-0}$  & 1 \\
+         $X^{-1}$ & $(2^8)^{-1}$  & (11111111 << 2040) + 1 \\
+         $X^{-2}$ & $(2^8)^{-2}$  & (11111111 11111111 << 2032) + 1 \\
+         $\ldots$ & $\ldots$ & $\ldots$ \\
+      \bottomrule
+    \end{tabular}
+  \end{table*}
+
+The last inverse power of $X$ will only have the first 56 bits of the 8th WDR and the first bit of the first WDR set to 1. The same optimized multiplication can therefore be applied again. The two multiplications, one by $t^{-1}$ and one with $X^{-i}$ are applied one after the other to save loading and storing operations. The numbers are modulo reduced before being stored back in memory such that they are prepared for the next and final step.
+
+\subsection{Step 7: SNEEZE, reorder coefficients and reduction modulo q}
+
+This step combines the sneeze operations, coefficient reordering and modulo reduction into one single pass through the numbers in order to minimize the number of reads and writes from the data memory. The pass is implemented by three nested for-loops that index 64-bit chunks that need to be read, sneezed, modulo reduced by q and placed back in the data memory at the corresponding position. Let's denote by $c^{64}_{i, j}$ the 64-bit chunk $j$ of number $i$, and in the same way $c^{256}_{i, j}$ the $j$th 256-bit chunks of number $i$. At the jth iteration of the first for-loop, $c^{256}_{0, j}, \ldots, c^{256}_{7, j}$ are loaded into registers. A second for-loop on $k$ indexes 64-bit chunks of these numbers and a third for-loop on $i$ indexes the numbers themselves giving $c^{64}_{i, j \cdot 4 + k}$. All operations in the third for loop, including, chunk extraction, $SNEEZE$ing and modulo reduction will be executed 256 times, hence the number of such operations needs to be minimized. 
+
+During $SNEEZE$, the carry from a corresponding previous $SNEEZE$ needs to be extracted from a carry array implemented as 8 bits stored in a WDR that are continuously shifting, and then added to the chunk. The if condition $a = c^{64}_{i, j \cdot 4 + k} + carry > 2^{l-1}$ turns out to be incredibly complex since $a$ could be less than $2^l$ and subtracting this value would result in a negative number, i.e. in a burrow. The solution is to add a certain multiple of q, which modulo q is 0, to $a$ in order to make $a$ larger than $2^l$, but keep it below $2^{l+1}$ such that, when subtracting $2^l$, the value stays positive and becomes less than $2^l$ so it can be represented on 64 bits. Representing on 64 bits is important because the modulo reduction by q is faster in this case. The multiple of q to be added can be any multiple that is greater than $2^{l-1}$ but smaller than $2^l$. It is chosen to be $q \cdot 2^{41}$. In the end, the $SNEEZE$ operation subtracts the remaining numbers from the first chunks.
+
+
+\begin{algorithm}[h]
+  \setstretch{1.3}
+  \caption{SNEEZE, reorder and modulo reduction}
+  \label{alg:step7}
+  \begin{algorithmic}[1]
+
+  \Procedure{SNEEZE \& Reorder \& Reduce}{$polynomial\_dmem\_location$}
+
+      \State $no\_bits\_per\_coeff = 9 \cdot 256$
+
+      \State $start = random\_free\_dmem\_location$($32 \cdot 256$
+
+      \State $next = start$
+
+      \State $carries = [0] * 8$
+
+      \For {$j = 0$; $j < 8$; $j$ ++}
+
+        \State $chunks = [0] * 8$
+
+        \State $p = polynomial\_dmem\_location + j \cdot 256$
+
+        \For {$i = 0$; $i < 8$; $i$ ++}  
+          \State $chunks[i] = load_{256}(p)$
+          \State $p$ += $no\_bits\_per\_coeff$
+        \EndFor
+
+        \For {$k = 0$; $k < 4$; $k$ ++}
+
+          \For {$i = 0$; $i < 8$; $i$ ++}
+
+            \State $number = chunks[i][(k + 1) \cdot 64 - 1 : k \cdot 64]$
+
+            \State $sneezed, carries[i] = SNEEZE(number, carries[i])$
+
+            \State $result = modulo\_reduce_q(sneezed)$
+
+            \State $store_{32}(sneezed, next)$
+
+            \State $next$ += $32$
+
+          \EndFor
+
+        \EndFor
+
+      \EndFor
+
+      \State $p = polynomial\_dmem\_location + 8 \cdot 256$ \Comment{last part of SNEEZE}
+
+      \State $next = start$
+
+      \For {$i = 0$; $i < 8$; $i$ ++}
+        \State $last = load_{256}(p)$
+        \State $number = load_{256}(next)$
+
+        \State $number = modulo\_reduce_q(number - last - carries[i])$
+
+        \State $store_{32}(number, next)$
+
+        \State $next$ += $32$
+        \State $p$ += $no\_bits\_per\_coeff$
+
+      \EndFor
+
+      \Return start
+
+  \EndProcedure
+
+  \end{algorithmic}
+\end{algorithm}

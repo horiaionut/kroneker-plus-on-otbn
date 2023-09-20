@@ -1,0 +1,1308 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{anyt/global//global/global}
+    \entry{10.1007/978-3-031-09234-3_42}{inproceedings}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=97614ff01fad7b16065ebd8273e26a8b}{%
+           family={Abdulrahman},
+           familyi={A\bibinitperiod},
+           given={Amin},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1564fc63f779140faf506750a73858a5}{%
+           family={Hwang},
+           familyi={H\bibinitperiod},
+           given={Vincent},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7803ff80a3ae380b32a5c87ab28e6f99}{%
+           family={Kannwischer},
+           familyi={K\bibinitperiod},
+           given={Matthias\bibnamedelima J.},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6324e9b95143f897eba9c160182f185b}{%
+           family={Sprenkels},
+           familyi={S\bibinitperiod},
+           given={Amber},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=5c4a4e7852b085ecea5927fa90f39f56}{%
+           family={Ateniese},
+           familyi={A\bibinitperiod},
+           given={Giuseppe},
+           giveni={G\bibinitperiod}}}%
+        {{hash=9ebcc8bb2edf35902533d761b883433c}{%
+           family={Venturi},
+           familyi={V\bibinitperiod},
+           given={Daniele},
+           giveni={D\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cham}%
+      }
+      \list{publisher}{1}{%
+        {Springer International Publishing}%
+      }
+      \strng{namehash}{fb8a1904c7888eb0f41b7596e521d2c8}
+      \strng{fullhash}{fb8a1904c7888eb0f41b7596e521d2c8}
+      \strng{bibnamehash}{fb8a1904c7888eb0f41b7596e521d2c8}
+      \strng{authorbibnamehash}{fb8a1904c7888eb0f41b7596e521d2c8}
+      \strng{authornamehash}{fb8a1904c7888eb0f41b7596e521d2c8}
+      \strng{authorfullhash}{fb8a1904c7888eb0f41b7596e521d2c8}
+      \strng{editorbibnamehash}{c74a815fe6e07dd47d6ed0e554df7e5b}
+      \strng{editornamehash}{c74a815fe6e07dd47d6ed0e554df7e5b}
+      \strng{editorfullhash}{c74a815fe6e07dd47d6ed0e554df7e5b}
+      \field{labelalpha}{Abd+22}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{This paper presents faster implementations of the lattice-based schemes Dilithium and Kyber on the Cortex-M4. Dilithium is one of three signature finalists in the NIST post-quantum project (NIST PQC), while Kyber is one of four key-encapsulation mechanism (KEM) finalists.}
+      \field{booktitle}{Applied Cryptography and Network Security}
+      \field{isbn}{978-3-031-09234-3}
+      \field{title}{Faster Kyber and Dilithium on the Cortex-M4}
+      \field{year}{2022}
+      \field{pages}{853\bibrangedash 871}
+      \range{pages}{19}
+    \endentry
+    \entry{cryptoeprint:2018/425}{misc}{}
+      \name{author}{6}{}{%
+        {{un=0,uniquepart=base,hash=a37bc8b4f2b4d2c2714c2fd0ce4e1c4b}{%
+           family={Albrecht},
+           familyi={A\bibinitperiod},
+           given={Martin\bibnamedelima R.},
+           giveni={M\bibinitperiod\bibinitdelim R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=25c0038c5979fda11c9c2d371daeb60f}{%
+           family={Hanser},
+           familyi={H\bibinitperiod},
+           given={Christian},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=fe4c0e4b1e4d45ad5f9072a8561e2c59}{%
+           family={Hoeller},
+           familyi={H\bibinitperiod},
+           given={Andrea},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=06e30c8599fd2968694f6e15d41c182c}{%
+           family={Pöppelmann},
+           familyi={P\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=67bff0f568e87fab4e8bca6a33dece11}{%
+           family={Virdia},
+           familyi={V\bibinitperiod},
+           given={Fernando},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ecc2a0d8ba742d98fd240afc0145951e}{%
+           family={Wallner},
+           familyi={W\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{22e714d3f829efa496f0bfb0ec6594f2}
+      \strng{fullhash}{8212402d64d6bd00b0d51ec7c6c731b4}
+      \strng{bibnamehash}{8212402d64d6bd00b0d51ec7c6c731b4}
+      \strng{authorbibnamehash}{8212402d64d6bd00b0d51ec7c6c731b4}
+      \strng{authornamehash}{22e714d3f829efa496f0bfb0ec6594f2}
+      \strng{authorfullhash}{8212402d64d6bd00b0d51ec7c6c731b4}
+      \field{labelalpha}{Alb+18}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Cryptology ePrint Archive, Paper 2018/425}
+      \field{note}{\url{https://eprint.iacr.org/2018/425}}
+      \field{title}{Implementing RLWE-based Schemes Using an RSA Co-Processor}
+      \field{year}{2018}
+      \verb{urlraw}
+      \verb https://eprint.iacr.org/2018/425
+      \endverb
+      \verb{url}
+      \verb https://eprint.iacr.org/2018/425
+      \endverb
+    \endentry
+    \entry{10.1007/978-3-662-46800-5_15}{inproceedings}{}
+      \name{author}{9}{}{%
+        {{un=0,uniquepart=base,hash=cc77f8b5fa3840f90938819e591aae07}{%
+           family={Bernstein},
+           familyi={B\bibinitperiod},
+           given={Daniel\bibnamedelima J.},
+           giveni={D\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1c1095c9d1e61240ce94aa7bde05c36f}{%
+           family={Hopwood},
+           familyi={H\bibinitperiod},
+           given={Daira},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e07df980cdbfba600caca198384a3e85}{%
+           family={Hülsing},
+           familyi={H\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2c76d81f56d9dce0a910572140690325}{%
+           family={Lange},
+           familyi={L\bibinitperiod},
+           given={Tanja},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bb5b512ed728a3c1bb3aa19834ddc78c}{%
+           family={Niederhagen},
+           familyi={N\bibinitperiod},
+           given={Ruben},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=48b46846e8a08ddd9555bc581d1caf44}{%
+           family={Papachristodoulou},
+           familyi={P\bibinitperiod},
+           given={Louiza},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=011cc96822d7baa0be7b01124f4ed55c}{%
+           family={Schneider},
+           familyi={S\bibinitperiod},
+           given={Michael},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d73f5269a295977070bf92d05cf9415e}{%
+           family={Schwabe},
+           familyi={S\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=abd71820d1e83216b134cbbed4a43666}{%
+           family={Wilcox-O'Hearn},
+           familyi={W\bibinithyphendelim O\bibinitperiod},
+           given={Zooko},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=cf7c0382045f06385a28d0235a0bbc97}{%
+           family={Oswald},
+           familyi={O\bibinitperiod},
+           given={Elisabeth},
+           giveni={E\bibinitperiod}}}%
+        {{hash=23091f1713beeb72d7a1d501b5d5923e}{%
+           family={Fischlin},
+           familyi={F\bibinitperiod},
+           given={Marc},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin, Heidelberg}%
+      }
+      \list{publisher}{1}{%
+        {Springer Berlin Heidelberg}%
+      }
+      \strng{namehash}{116aaf76b575557b3e07010be1cff36e}
+      \strng{fullhash}{fff234bb998f60715828fc2f2d7515c4}
+      \strng{bibnamehash}{fff234bb998f60715828fc2f2d7515c4}
+      \strng{authorbibnamehash}{fff234bb998f60715828fc2f2d7515c4}
+      \strng{authornamehash}{116aaf76b575557b3e07010be1cff36e}
+      \strng{authorfullhash}{fff234bb998f60715828fc2f2d7515c4}
+      \strng{editorbibnamehash}{9ea6fcd5ce4fef03eedf71c589ed1bb3}
+      \strng{editornamehash}{9ea6fcd5ce4fef03eedf71c589ed1bb3}
+      \strng{editorfullhash}{9ea6fcd5ce4fef03eedf71c589ed1bb3}
+      \field{labelalpha}{Ber+15}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{This paper introduces a high-security post-quantum stateless hash-based signature scheme that signs hundreds of messages per second on a modern 4-core 3.5GHz Intel CPU. Signatures are 41 KB, public keys are 1 KB, and private keys are 1 KB. The signature scheme is designed to provide long-term {\$}{\$}2^{\{}128{\}}{\$}{\$}security even against attackers equipped with quantum computers. Unlike most hash-based designs, this signature scheme is stateless, allowing it to be a drop-in replacement for current signature schemes.}
+      \field{booktitle}{Advances in Cryptology -- EUROCRYPT 2015}
+      \field{isbn}{978-3-662-46800-5}
+      \field{title}{SPHINCS: Practical Stateless Hash-Based Signatures}
+      \field{year}{2015}
+      \field{pages}{368\bibrangedash 397}
+      \range{pages}{30}
+    \endentry
+    \entry{cryptoeprint:2017/634}{misc}{}
+      \name{author}{9}{}{%
+        {{un=1,uniquepart=given,hash=a9539145b18ecc235369e5a2fb343671}{%
+           family={Bos},
+           familyi={B\bibinitperiod},
+           given={Joppe},
+           giveni={J\bibinitperiod},
+           givenun=1}}%
+        {{un=0,uniquepart=base,hash=b6d4403f80a724e07d939dd9699079e1}{%
+           family={Ducas},
+           familyi={D\bibinitperiod},
+           given={Léo},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3a691fc6ff884507edcdc40d4048c61a}{%
+           family={Kiltz},
+           familyi={K\bibinitperiod},
+           given={Eike},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=2fc09307a369c9e72581360e16d9b200}{%
+           family={Lepoint},
+           familyi={L\bibinitperiod},
+           given={Tancrède},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=928bcadb00050adca6148fe4cbefc5d7}{%
+           family={Lyubashevsky},
+           familyi={L\bibinitperiod},
+           given={Vadim},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=19c0a70c0adf29a8265f6bed42a4a6ee}{%
+           family={Schanck},
+           familyi={S\bibinitperiod},
+           given={John\bibnamedelima M.},
+           giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d73f5269a295977070bf92d05cf9415e}{%
+           family={Schwabe},
+           familyi={S\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6ad6aaf85bcdaa083e71211a4c9cd987}{%
+           family={Seiler},
+           familyi={S\bibinitperiod},
+           given={Gregor},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a62525428858d55df35a4c76348af2b9}{%
+           family={Stehlé},
+           familyi={S\bibinitperiod},
+           given={Damien},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{35687c0fc0c5886c4bf2498d205d76f9}
+      \strng{fullhash}{5802cc1694eea63175dc9a625957cb4e}
+      \strng{bibnamehash}{5802cc1694eea63175dc9a625957cb4e}
+      \strng{authorbibnamehash}{5802cc1694eea63175dc9a625957cb4e}
+      \strng{authornamehash}{35687c0fc0c5886c4bf2498d205d76f9}
+      \strng{authorfullhash}{5802cc1694eea63175dc9a625957cb4e}
+      \field{labelalpha}{Bos+17}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Cryptology ePrint Archive, Paper 2017/634}
+      \field{note}{\url{https://eprint.iacr.org/2017/634}}
+      \field{title}{CRYSTALS -- Kyber: a CCA-secure module-lattice-based KEM}
+      \field{year}{2017}
+      \verb{doi}
+      \verb 10.1109/EuroSP.2018.00032
+      \endverb
+      \verb{urlraw}
+      \verb https://eprint.iacr.org/2017/634
+      \endverb
+      \verb{url}
+      \verb https://eprint.iacr.org/2017/634
+      \endverb
+    \endentry
+    \entry{cryptoeprint:2020/1303}{misc}{}
+      \name{author}{3}{}{%
+        {{un=1,uniquepart=given,hash=b98fdf377c34c4c151c50323b854be4e}{%
+           family={Bos},
+           familyi={B\bibinitperiod},
+           given={Joppe\bibnamedelima W.},
+           giveni={J\bibinitperiod\bibinitdelim W\bibinitperiod},
+           givenun=1}}%
+        {{un=0,uniquepart=base,hash=4fc91c1dc6de5628ebc2e4ab8675a1c5}{%
+           family={Renes},
+           familyi={R\bibinitperiod},
+           given={Joost},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d6f75ddbdff08e1eec9c16d5ae70e952}{%
+           family={Vredendaal},
+           familyi={V\bibinitperiod},
+           given={Christine},
+           giveni={C\bibinitperiod},
+           givenun=0,
+           prefix={van},
+           prefixi={v\bibinitperiod},
+           prefixun=0}}%
+      }
+      \strng{namehash}{306ee9f2437d890033404426d5517541}
+      \strng{fullhash}{306ee9f2437d890033404426d5517541}
+      \strng{bibnamehash}{306ee9f2437d890033404426d5517541}
+      \strng{authorbibnamehash}{306ee9f2437d890033404426d5517541}
+      \strng{authornamehash}{306ee9f2437d890033404426d5517541}
+      \strng{authorfullhash}{306ee9f2437d890033404426d5517541}
+      \field{labelalpha}{BRV20}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Cryptology ePrint Archive, Paper 2020/1303}
+      \field{note}{\url{https://eprint.iacr.org/2020/1303}}
+      \field{title}{Post-Quantum Cryptography with Contemporary Co-Processors: Beyond Kronecker, Schönhage-Strassen \& Nussbaumer}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://eprint.iacr.org/2020/1303
+      \endverb
+      \verb{url}
+      \verb https://eprint.iacr.org/2020/1303
+      \endverb
+    \endentry
+    \entry{Cook1969ONTM}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=609a39905dc0e988c3b294dceecdb1e4}{%
+           family={Cook},
+           familyi={C\bibinitperiod},
+           given={Stephen\bibnamedelima A.},
+           giveni={S\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=360f70f345467e77e688e714c6782428}{%
+           family={Aanderaa},
+           familyi={A\bibinitperiod},
+           given={St{å}l\bibnamedelima O.},
+           giveni={S\bibinitperiod\bibinitdelim O\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{e0ac38d819da0ea7a3540bd9fab23470}
+      \strng{fullhash}{e0ac38d819da0ea7a3540bd9fab23470}
+      \strng{bibnamehash}{e0ac38d819da0ea7a3540bd9fab23470}
+      \strng{authorbibnamehash}{e0ac38d819da0ea7a3540bd9fab23470}
+      \strng{authornamehash}{e0ac38d819da0ea7a3540bd9fab23470}
+      \strng{authorfullhash}{e0ac38d819da0ea7a3540bd9fab23470}
+      \field{labelalpha}{CA69}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Transactions of the American Mathematical Society}
+      \field{title}{ON THE MINIMUM COMPUTATION TIME OF FUNCTIONS}
+      \field{volume}{142}
+      \field{year}{1969}
+      \field{pages}{291\bibrangedash 314}
+      \range{pages}{24}
+      \verb{urlraw}
+      \verb https://api.semanticscholar.org/CorpusID:41732226
+      \endverb
+      \verb{url}
+      \verb https://api.semanticscholar.org/CorpusID:41732226
+      \endverb
+    \endentry
+    \entry{10.5555/1614191}{book}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=835b8c52757d98c15859b416316d9820}{%
+           family={Cormen},
+           familyi={C\bibinitperiod},
+           given={Thomas\bibnamedelima H.},
+           giveni={T\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a389dea91a76366c4b4af5f52a928a76}{%
+           family={Leiserson},
+           familyi={L\bibinitperiod},
+           given={Charles\bibnamedelima E.},
+           giveni={C\bibinitperiod\bibinitdelim E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3a964821f97ee17f8bb285bc61c52899}{%
+           family={Rivest},
+           familyi={R\bibinitperiod},
+           given={Ronald\bibnamedelima L.},
+           giveni={R\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=bc78426660400760f77758aec45e71a8}{%
+           family={Stein},
+           familyi={S\bibinitperiod},
+           given={Clifford},
+           giveni={C\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{publisher}{1}{%
+        {The MIT Press}%
+      }
+      \strng{namehash}{10f004e08c7c03d98be0da1231a869ce}
+      \strng{fullhash}{10f004e08c7c03d98be0da1231a869ce}
+      \strng{bibnamehash}{10f004e08c7c03d98be0da1231a869ce}
+      \strng{authorbibnamehash}{10f004e08c7c03d98be0da1231a869ce}
+      \strng{authornamehash}{10f004e08c7c03d98be0da1231a869ce}
+      \strng{authorfullhash}{10f004e08c7c03d98be0da1231a869ce}
+      \field{labelalpha}{Cor+09}
+      \field{sortinit}{C}
+      \field{sortinithash}{4d103a86280481745c9c897c925753c0}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{If you had to buy just one text on algorithms, Introduction to Algorithms is a magnificent choice. The book begins by considering the mathematical foundations of the analysis of algorithms and maintains this mathematical rigor throughout the work. The tools developed in these opening sections are then applied to sorting, data structures, graphs, and a variety of selected algorithms including computational geometry, string algorithms, parallel models of computation, fast Fourier transforms (FFTs), and more. This book's strength lies in its encyclopedic range, clear exposition, and powerful analysis. Pseudo-code explanation of the algorithms coupled with proof of their accuracy makes this book is a great resource on the basic tools used to analyze the performance of algorithms.}
+      \field{edition}{3rd}
+      \field{isbn}{0262033844}
+      \field{title}{Introduction to Algorithms, Third Edition}
+      \field{year}{2009}
+    \endentry
+    \entry{reciprocal}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=12e2856d873e51372c7d9f4c9a114451}{%
+           family={{Douglas W. Jones }},
+           familyi={D\bibinitperiod}}}%
+      }
+      \strng{namehash}{12e2856d873e51372c7d9f4c9a114451}
+      \strng{fullhash}{12e2856d873e51372c7d9f4c9a114451}
+      \strng{bibnamehash}{12e2856d873e51372c7d9f4c9a114451}
+      \strng{authorbibnamehash}{12e2856d873e51372c7d9f4c9a114451}
+      \strng{authornamehash}{12e2856d873e51372c7d9f4c9a114451}
+      \strng{authorfullhash}{12e2856d873e51372c7d9f4c9a114451}
+      \field{labelalpha}{Dou}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Reciprocal Multiplication}
+      \verb{urlraw}
+      \verb https://homepage.divms.uiowa.edu/%7Ejones/bcd/divide.html
+      \endverb
+      \verb{url}
+      \verb https://homepage.divms.uiowa.edu/%7Ejones/bcd/divide.html
+      \endverb
+    \endentry
+    \entry{cryptoeprint:2017/633}{misc}{}
+      \name{author}{6}{}{%
+        {{un=0,uniquepart=base,hash=af45937f5146427dab90d717c0274a3b}{%
+           family={Ducas},
+           familyi={D\bibinitperiod},
+           given={Leo},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d03670ea34cfab3cc04211f1605dc6e3}{%
+           family={Lepoint},
+           familyi={L\bibinitperiod},
+           given={Tancrede},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=928bcadb00050adca6148fe4cbefc5d7}{%
+           family={Lyubashevsky},
+           familyi={L\bibinitperiod},
+           given={Vadim},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d73f5269a295977070bf92d05cf9415e}{%
+           family={Schwabe},
+           familyi={S\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6ad6aaf85bcdaa083e71211a4c9cd987}{%
+           family={Seiler},
+           familyi={S\bibinitperiod},
+           given={Gregor},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=589d33cc0094d51211bef3b93ec84fcd}{%
+           family={Stehle},
+           familyi={S\bibinitperiod},
+           given={Damien},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{f6070c30bfeaa777a36242e9dc201afb}
+      \strng{fullhash}{c056d9f743dd1e4bab55e83783a60f74}
+      \strng{bibnamehash}{c056d9f743dd1e4bab55e83783a60f74}
+      \strng{authorbibnamehash}{c056d9f743dd1e4bab55e83783a60f74}
+      \strng{authornamehash}{f6070c30bfeaa777a36242e9dc201afb}
+      \strng{authorfullhash}{c056d9f743dd1e4bab55e83783a60f74}
+      \field{labelalpha}{Duc+17}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Cryptology ePrint Archive, Paper 2017/633}
+      \field{note}{\url{https://eprint.iacr.org/2017/633}}
+      \field{title}{CRYSTALS -- Dilithium: Digital Signatures from Module Lattices}
+      \field{year}{2017}
+      \verb{urlraw}
+      \verb https://eprint.iacr.org/2017/633
+      \endverb
+      \verb{url}
+      \verb https://eprint.iacr.org/2017/633
+      \endverb
+    \endentry
+    \entry{cryptoeprint:2020/1278}{misc}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=a3e1d5526ebcc5e334d2a8a190ed05e6}{%
+           family={Greconici},
+           familyi={G\bibinitperiod},
+           given={Denisa\bibnamedelimb O.\bibnamedelimi C.},
+           giveni={D\bibinitperiod\bibinitdelim O\bibinitperiod\bibinitdelim C\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7803ff80a3ae380b32a5c87ab28e6f99}{%
+           family={Kannwischer},
+           familyi={K\bibinitperiod},
+           given={Matthias\bibnamedelima J.},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6324e9b95143f897eba9c160182f185b}{%
+           family={Sprenkels},
+           familyi={S\bibinitperiod},
+           given={Amber},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{abd3d9b8c8dee4fee1fbbf007ec74dea}
+      \strng{fullhash}{abd3d9b8c8dee4fee1fbbf007ec74dea}
+      \strng{bibnamehash}{abd3d9b8c8dee4fee1fbbf007ec74dea}
+      \strng{authorbibnamehash}{abd3d9b8c8dee4fee1fbbf007ec74dea}
+      \strng{authornamehash}{abd3d9b8c8dee4fee1fbbf007ec74dea}
+      \strng{authorfullhash}{abd3d9b8c8dee4fee1fbbf007ec74dea}
+      \field{labelalpha}{GKS20}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Cryptology ePrint Archive, Paper 2020/1278}
+      \field{note}{\url{https://eprint.iacr.org/2020/1278}}
+      \field{title}{Compact Dilithium Implementations on Cortex-M3 and Cortex-M4}
+      \field{year}{2020}
+      \verb{doi}
+      \verb 10.46586/tches.v2021.i1.1-24
+      \endverb
+      \verb{urlraw}
+      \verb https://eprint.iacr.org/2020/1278
+      \endverb
+      \verb{url}
+      \verb https://eprint.iacr.org/2020/1278
+      \endverb
+    \endentry
+    \entry{4272869}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=34d043b6461b86a852b82fc1e828a172}{%
+           family={Hasenplaugh},
+           familyi={H\bibinitperiod},
+           given={William},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=41c4c2d9a1bc70f1a173fad1cdde92b3}{%
+           family={Gaubatz},
+           familyi={G\bibinitperiod},
+           given={Gunnar},
+           giveni={G\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c3cbf6687dfd4c6b395fb028a717335e}{%
+           family={Gopal},
+           familyi={G\bibinitperiod},
+           given={Vinodh},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{4d2d4d10f538f5a34d5267da125b3592}
+      \strng{fullhash}{4d2d4d10f538f5a34d5267da125b3592}
+      \strng{bibnamehash}{4d2d4d10f538f5a34d5267da125b3592}
+      \strng{authorbibnamehash}{4d2d4d10f538f5a34d5267da125b3592}
+      \strng{authornamehash}{4d2d4d10f538f5a34d5267da125b3592}
+      \strng{authorfullhash}{4d2d4d10f538f5a34d5267da125b3592}
+      \field{labelalpha}{HGG07}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{18th IEEE Symposium on Computer Arithmetic (ARITH '07)}
+      \field{title}{Fast Modular Reduction}
+      \field{year}{2007}
+      \field{pages}{225\bibrangedash 229}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1109/ARITH.2007.18
+      \endverb
+    \endentry
+    \entry{karatsuba}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=3bc2c053060df82066b9d16180f59bc5}{%
+           family={Karatsuba},
+           familyi={K\bibinitperiod},
+           given={Anatolii},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=eaa913281d5349d3e34b467345496356}{%
+           family={Ofman},
+           familyi={O\bibinitperiod},
+           given={Yu},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{83e58dc6a23d569f943601fc9abbf67f}
+      \strng{fullhash}{83e58dc6a23d569f943601fc9abbf67f}
+      \strng{bibnamehash}{83e58dc6a23d569f943601fc9abbf67f}
+      \strng{authorbibnamehash}{83e58dc6a23d569f943601fc9abbf67f}
+      \strng{authornamehash}{83e58dc6a23d569f943601fc9abbf67f}
+      \strng{authorfullhash}{83e58dc6a23d569f943601fc9abbf67f}
+      \field{labelalpha}{KO62}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Soviet Physics Doklady}
+      \field{month}{12}
+      \field{title}{Multiplication of Multidigit Numbers on Automata}
+      \field{volume}{7}
+      \field{year}{1962}
+      \field{pages}{595}
+      \range{pages}{1}
+    \endentry
+    \entry{liang2022number}{misc}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=26cbc4bfe109d2397dc602e0f4388619}{%
+           family={Liang},
+           familyi={L\bibinitperiod},
+           given={Zhichuang},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7db0d40e18c57569494b1eaf191f5877}{%
+           family={Zhao},
+           familyi={Z\bibinitperiod},
+           given={Yunlei},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{2a75e30e9c5cd0abec0e72a54328011c}
+      \strng{fullhash}{2a75e30e9c5cd0abec0e72a54328011c}
+      \strng{bibnamehash}{2a75e30e9c5cd0abec0e72a54328011c}
+      \strng{authorbibnamehash}{2a75e30e9c5cd0abec0e72a54328011c}
+      \strng{authornamehash}{2a75e30e9c5cd0abec0e72a54328011c}
+      \strng{authorfullhash}{2a75e30e9c5cd0abec0e72a54328011c}
+      \field{labelalpha}{LZ22}
+      \field{sortinit}{L}
+      \field{sortinithash}{7c47d417cecb1f4bd38d1825c427a61a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{cs.CR}
+      \field{eprinttype}{arXiv}
+      \field{title}{Number Theoretic Transform and Its Applications in Lattice-based Cryptosystems: A Survey}
+      \field{year}{2022}
+      \verb{eprint}
+      \verb 2211.13546
+      \endverb
+    \endentry
+    \entry{10.1007/3-540-39799-X_31}{inproceedings}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=396bf3aa1a2c738c7864c19e04f3053f}{%
+           family={Miller},
+           familyi={M\bibinitperiod},
+           given={Victor\bibnamedelima S.},
+           giveni={V\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=a530fe1d98c8b26c3813820a5f8b4151}{%
+           family={Williams},
+           familyi={W\bibinitperiod},
+           given={Hugh\bibnamedelima C.},
+           giveni={H\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin, Heidelberg}%
+      }
+      \list{publisher}{1}{%
+        {Springer Berlin Heidelberg}%
+      }
+      \strng{namehash}{396bf3aa1a2c738c7864c19e04f3053f}
+      \strng{fullhash}{396bf3aa1a2c738c7864c19e04f3053f}
+      \strng{bibnamehash}{396bf3aa1a2c738c7864c19e04f3053f}
+      \strng{authorbibnamehash}{396bf3aa1a2c738c7864c19e04f3053f}
+      \strng{authornamehash}{396bf3aa1a2c738c7864c19e04f3053f}
+      \strng{authorfullhash}{396bf3aa1a2c738c7864c19e04f3053f}
+      \strng{editorbibnamehash}{a530fe1d98c8b26c3813820a5f8b4151}
+      \strng{editornamehash}{a530fe1d98c8b26c3813820a5f8b4151}
+      \strng{editorfullhash}{a530fe1d98c8b26c3813820a5f8b4151}
+      \field{labelalpha}{Mil86}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{We discuss the use of elliptic curves in cryptography. In particular, we propose an analogue of the Diffie-Hellmann key exchange protocol which appears to be immune from attacks of the style of Western, Miller, and Adleman. With the current bounds for infeasible attack, it appears to be about 20{\%} faster than the Diffie-Hellmann scheme over GF(p). As computational power grows, this disparity should get rapidly bigger.}
+      \field{booktitle}{Advances in Cryptology --- CRYPTO '85 Proceedings}
+      \field{isbn}{978-3-540-39799-1}
+      \field{title}{Use of Elliptic Curves in Cryptography}
+      \field{year}{1986}
+      \field{pages}{417\bibrangedash 426}
+      \range{pages}{10}
+    \endentry
+    \entry{1163372}{article}{}
+      \name{author}{1}{}{%
+        {{un=1,uniquepart=given,hash=48bf32079ac93168f4685c7bb812da0f}{%
+           family={Nussbaumer},
+           familyi={N\bibinitperiod},
+           given={H.},
+           giveni={H\bibinitperiod},
+           givenun=1}}%
+      }
+      \strng{namehash}{48bf32079ac93168f4685c7bb812da0f}
+      \strng{fullhash}{48bf32079ac93168f4685c7bb812da0f}
+      \strng{bibnamehash}{48bf32079ac93168f4685c7bb812da0f}
+      \strng{authorbibnamehash}{48bf32079ac93168f4685c7bb812da0f}
+      \strng{authornamehash}{48bf32079ac93168f4685c7bb812da0f}
+      \strng{authorfullhash}{48bf32079ac93168f4685c7bb812da0f}
+      \field{labelalpha}{Nus80}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Acoustics, Speech, and Signal Processing}
+      \field{number}{2}
+      \field{title}{Fast polynomial transform algorithms for digital convolution}
+      \field{volume}{28}
+      \field{year}{1980}
+      \field{pages}{205\bibrangedash 215}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.1109/TASSP.1980.1163372
+      \endverb
+    \endentry
+    \entry{Nussbaumer1980FastPT}{article}{}
+      \name{author}{1}{}{%
+        {{un=1,uniquepart=given,hash=cfcab2df4e8c6a328bf7440a74bbc2fd}{%
+           family={Nussbaumer},
+           familyi={N\bibinitperiod},
+           given={Henri\bibnamedelima J.},
+           giveni={H\bibinitperiod\bibinitdelim J\bibinitperiod},
+           givenun=1}}%
+      }
+      \strng{namehash}{cfcab2df4e8c6a328bf7440a74bbc2fd}
+      \strng{fullhash}{cfcab2df4e8c6a328bf7440a74bbc2fd}
+      \strng{bibnamehash}{cfcab2df4e8c6a328bf7440a74bbc2fd}
+      \strng{authorbibnamehash}{cfcab2df4e8c6a328bf7440a74bbc2fd}
+      \strng{authornamehash}{cfcab2df4e8c6a328bf7440a74bbc2fd}
+      \strng{authorfullhash}{cfcab2df4e8c6a328bf7440a74bbc2fd}
+      \field{labelalpha}{Nus80}
+      \field{sortinit}{N}
+      \field{sortinithash}{22369a73d5f88983a108b63f07f37084}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Acoustics, Speech, and Signal Processing}
+      \field{title}{Fast polynomial transform algorithms for digital convolution}
+      \field{volume}{28}
+      \field{year}{1980}
+      \field{pages}{205\bibrangedash 215}
+      \range{pages}{11}
+      \verb{urlraw}
+      \verb https://api.semanticscholar.org/CorpusID:121556373
+      \endverb
+      \verb{url}
+      \verb https://api.semanticscholar.org/CorpusID:121556373
+      \endverb
+    \endentry
+    \entry{OTBN}{online}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=961ed5a0ad35f077c2c35290a1915719}{%
+           family={{OTBN}},
+           familyi={O\bibinitperiod}}}%
+      }
+      \strng{namehash}{961ed5a0ad35f077c2c35290a1915719}
+      \strng{fullhash}{961ed5a0ad35f077c2c35290a1915719}
+      \strng{bibnamehash}{961ed5a0ad35f077c2c35290a1915719}
+      \strng{authorbibnamehash}{961ed5a0ad35f077c2c35290a1915719}
+      \strng{authornamehash}{961ed5a0ad35f077c2c35290a1915719}
+      \strng{authorfullhash}{961ed5a0ad35f077c2c35290a1915719}
+      \field{labelalpha}{OTB}
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{OpenTitan Big Number Accelerator}
+      \verb{urlraw}
+      \verb https://opentitan.org/book/hw/ip/otbn/index.html
+      \endverb
+      \verb{url}
+      \verb https://opentitan.org/book/hw/ip/otbn/index.html
+      \endverb
+    \endentry
+    \entry{10.1007/978-3-319-22174-8_19}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=06e30c8599fd2968694f6e15d41c182c}{%
+           family={Pöppelmann},
+           familyi={P\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3854d3e210d104a96c863d8f693fda54}{%
+           family={Oder},
+           familyi={O\bibinitperiod},
+           given={Tobias},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e9e81439eeb31c3904e597d0b967c750}{%
+           family={Güneysu},
+           familyi={G\bibinitperiod},
+           given={Tim},
+           giveni={T\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=680b73bfd0dd39885486c8671a3d00c1}{%
+           family={Lauter},
+           familyi={L\bibinitperiod},
+           given={Kristin},
+           giveni={K\bibinitperiod}}}%
+        {{hash=b627018395ce3cc5acaffd460c9b4e14}{%
+           family={Rodríguez-Henríquez},
+           familyi={R\bibinithyphendelim H\bibinitperiod},
+           given={Francisco},
+           giveni={F\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cham}%
+      }
+      \list{publisher}{1}{%
+        {Springer International Publishing}%
+      }
+      \strng{namehash}{8b85dbe4467bbf5f6e6937615460eb60}
+      \strng{fullhash}{8b85dbe4467bbf5f6e6937615460eb60}
+      \strng{bibnamehash}{8b85dbe4467bbf5f6e6937615460eb60}
+      \strng{authorbibnamehash}{8b85dbe4467bbf5f6e6937615460eb60}
+      \strng{authornamehash}{8b85dbe4467bbf5f6e6937615460eb60}
+      \strng{authorfullhash}{8b85dbe4467bbf5f6e6937615460eb60}
+      \strng{editorbibnamehash}{348fb71d4beb50b75de6a5f8f85b09d6}
+      \strng{editornamehash}{348fb71d4beb50b75de6a5f8f85b09d6}
+      \strng{editorfullhash}{348fb71d4beb50b75de6a5f8f85b09d6}
+      \field{labelalpha}{POG15}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Over the last years lattice-based cryptography has received much attention due to versatile average-case problems like Ring-LWE or Ring-SIS that appear to be intractable by quantum computers. But despite of promising constructions, only few results have been published on implementation issues on very constrained platforms. In this work we therefore study and compare implementations of Ring-LWE encryption and the Bimodal Lattice Signature Scheme (BLISS) on an 8-bit Atmel ATxmega128 microcontroller. Since the number theoretic transform (NTT) is one of the core components in implementations of lattice-based cryptosystems, we review the application of the NTT in previous implementations and present an improved approach that significantly lowers the runtime for polynomial multiplication. Our implementation of Ring-LWE encryption takes 27 ms for encryption and 6.7 ms for decryption. To compute a BLISS signature, our software takes 329 ms and 88 ms for verification. These results outperform implementations on similar platforms and underline the feasibility of lattice-based cryptography on constrained devices.}
+      \field{booktitle}{Progress in Cryptology -- LATINCRYPT 2015}
+      \field{isbn}{978-3-319-22174-8}
+      \field{title}{High-Performance Ideal Lattice-Based Cryptography on 8-Bit ATxmega Microcontrollers}
+      \field{year}{2015}
+      \field{pages}{346\bibrangedash 365}
+      \range{pages}{20}
+    \endentry
+    \entry{Pollard1971TheFF}{article}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=05a6a7511b48b0c2b6692e79b94e8ee7}{%
+           family={Pollard},
+           familyi={P\bibinitperiod},
+           given={John\bibnamedelima M.},
+           giveni={J\bibinitperiod\bibinitdelim M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{05a6a7511b48b0c2b6692e79b94e8ee7}
+      \strng{fullhash}{05a6a7511b48b0c2b6692e79b94e8ee7}
+      \strng{bibnamehash}{05a6a7511b48b0c2b6692e79b94e8ee7}
+      \strng{authorbibnamehash}{05a6a7511b48b0c2b6692e79b94e8ee7}
+      \strng{authornamehash}{05a6a7511b48b0c2b6692e79b94e8ee7}
+      \strng{authorfullhash}{05a6a7511b48b0c2b6692e79b94e8ee7}
+      \field{labelalpha}{Pol71}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Mathematics of Computation}
+      \field{title}{The fast Fourier transform in a finite field}
+      \field{volume}{25}
+      \field{year}{1971}
+      \field{pages}{365\bibrangedash 374}
+      \range{pages}{10}
+      \verb{urlraw}
+      \verb https://api.semanticscholar.org/CorpusID:123174851
+      \endverb
+      \verb{url}
+      \verb https://api.semanticscholar.org/CorpusID:123174851
+      \endverb
+    \endentry
+    \entry{10.1145/359340.359342}{article}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=6a630bbc1f4da3f000de53a8c3fcda9a}{%
+           family={Rivest},
+           familyi={R\bibinitperiod},
+           given={R.\bibnamedelimi L.},
+           giveni={R\bibinitperiod\bibinitdelim L\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7b33764dee51f9ccad6bf7f94f4a5328}{%
+           family={Shamir},
+           familyi={S\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4a8266f26fefcaad4dc64bfd4220a4ae}{%
+           family={Adleman},
+           familyi={A\bibinitperiod},
+           given={L.},
+           giveni={L\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {New York, NY, USA}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computing Machinery}%
+      }
+      \strng{namehash}{e6041f1e6bea0c7f11abe539180c7aa5}
+      \strng{fullhash}{e6041f1e6bea0c7f11abe539180c7aa5}
+      \strng{bibnamehash}{e6041f1e6bea0c7f11abe539180c7aa5}
+      \strng{authorbibnamehash}{e6041f1e6bea0c7f11abe539180c7aa5}
+      \strng{authornamehash}{e6041f1e6bea0c7f11abe539180c7aa5}
+      \strng{authorfullhash}{e6041f1e6bea0c7f11abe539180c7aa5}
+      \field{labelalpha}{RSA78}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{An encryption method is presented with the novel property that publicly revealing an encryption key does not thereby reveal the corresponding decryption key. This has two important consequences: (1) Couriers or other secure means are not needed to transmit keys, since a message can be enciphered using an encryption key publicly revealed by the intented recipient. Only he can decipher the message, since only he knows the corresponding decryption key. (2) A message can be “signed” using a privately held decryption key. Anyone can verify this signature using the corresponding publicly revealed encryption key. Signatures cannot be forged, and a signer cannot later deny the validity of his signature. This has obvious applications in “electronic mail” and “electronic funds transfer” systems. A message is encrypted by representing it as a number M, raising M to a publicly specified power e, and then taking the remainder when the result is divided by the publicly specified product, n, of two large secret primer numbers p and q. Decryption is similar; only a different, secret, power d is used, where e * d ≡ 1(mod (p - 1) * (q - 1)). The security of the system rests in part on the difficulty of factoring the published divisor, n.}
+      \field{issn}{0001-0782}
+      \field{journaltitle}{Commun. ACM}
+      \field{month}{2}
+      \field{number}{2}
+      \field{title}{A Method for Obtaining Digital Signatures and Public-Key Cryptosystems}
+      \field{volume}{21}
+      \field{year}{1978}
+      \field{pages}{120\bibrangedash 126}
+      \range{pages}{7}
+      \verb{doi}
+      \verb 10.1145/359340.359342
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1145/359340.359342
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1145/359340.359342
+      \endverb
+      \keyw{message-passing,cryptography,privacy,electronic mail,electronic funds transfer,authentication,prime number,digital signatures,public-key cryptosystems,factorization,security}
+    \endentry
+    \entry{10.1007/3-540-11607-9_1}{inproceedings}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=0ba418451065e19e7e709437e306d37b}{%
+           family={Schönhage},
+           familyi={S\bibinitperiod},
+           given={Arnold},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{1}{}{%
+        {{hash=e03740bed0c76de302ea554f197ca0df}{%
+           family={Calmet},
+           familyi={C\bibinitperiod},
+           given={Jacques},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Berlin, Heidelberg}%
+      }
+      \list{publisher}{1}{%
+        {Springer Berlin Heidelberg}%
+      }
+      \strng{namehash}{0ba418451065e19e7e709437e306d37b}
+      \strng{fullhash}{0ba418451065e19e7e709437e306d37b}
+      \strng{bibnamehash}{0ba418451065e19e7e709437e306d37b}
+      \strng{authorbibnamehash}{0ba418451065e19e7e709437e306d37b}
+      \strng{authornamehash}{0ba418451065e19e7e709437e306d37b}
+      \strng{authorfullhash}{0ba418451065e19e7e709437e306d37b}
+      \strng{editorbibnamehash}{e03740bed0c76de302ea554f197ca0df}
+      \strng{editornamehash}{e03740bed0c76de302ea554f197ca0df}
+      \strng{editorfullhash}{e03740bed0c76de302ea554f197ca0df}
+      \field{labelalpha}{Sch82}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Multiplication of univariate n-th degree polynomials over ℂ by straight application of FFT's carried out numerically in ℓ-bit precision will require time O(n log n $\psi$(ℓ)), where $\psi$(m) bounds the time for multiplication of m-bit integers, e.g. $\psi$(m) = cm for pointer machines or $\psi$(m) = cm{·}log(m+1){·}log log(m+2) for multitape Turing machines. Here a new method is presented, based upon long integer multiplication, by which even faster algorithms can be obtained. Under reasonable assumptions (like ℓ≥log(n+1), and on the coefficient size) polynomial multiplication and discrete Fourier transforms of length n and in ℓ-bit precision are possible in time O($\psi$ (nℓ)), and division of polynomials in O($\psi$(n(ℓ+n))). Included is also a new version of integer multiplication mod(2N+1).}
+      \field{booktitle}{Computer Algebra}
+      \field{isbn}{978-3-540-39433-4}
+      \field{title}{Asymptotically fast algorithms for the numerical muitiplication and division of polynomials with complex coefficients}
+      \field{year}{1982}
+      \field{pages}{3\bibrangedash 15}
+      \range{pages}{13}
+    \endentry
+    \entry{365700}{inproceedings}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=a24fb60f0ae3752c34144e38865ecca9}{%
+           family={Shor},
+           familyi={S\bibinitperiod},
+           given={P.W.},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{a24fb60f0ae3752c34144e38865ecca9}
+      \strng{fullhash}{a24fb60f0ae3752c34144e38865ecca9}
+      \strng{bibnamehash}{a24fb60f0ae3752c34144e38865ecca9}
+      \strng{authorbibnamehash}{a24fb60f0ae3752c34144e38865ecca9}
+      \strng{authornamehash}{a24fb60f0ae3752c34144e38865ecca9}
+      \strng{authorfullhash}{a24fb60f0ae3752c34144e38865ecca9}
+      \field{labelalpha}{Sho94}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings 35th Annual Symposium on Foundations of Computer Science}
+      \field{title}{Algorithms for quantum computation: discrete logarithms and factoring}
+      \field{year}{1994}
+      \field{pages}{124\bibrangedash 134}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.1109/SFCS.1994.365700
+      \endverb
+    \endentry
+    \entry{Solinas2011}{inbook}{}
+      \name{author}{1}{}{%
+        {{un=0,uniquepart=base,hash=27482d1bc784f4a2ae56e6e4d527aa5d}{%
+           family={Solinas},
+           familyi={S\bibinitperiod},
+           given={Jerome\bibnamedelima A.},
+           giveni={J\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{2}{}{%
+        {{hash=35add64d2cc75f20e5d6743f4d9788ca}{%
+           family={Tilborg},
+           familyi={T\bibinitperiod},
+           given={Henk\bibnamedelimb C.\bibnamedelimi A.},
+           giveni={H\bibinitperiod\bibinitdelim C\bibinitperiod\bibinitdelim A\bibinitperiod},
+           prefix={van},
+           prefixi={v\bibinitperiod}}}%
+        {{hash=f21aa520ad69374e7b6d40b5c0891da7}{%
+           family={Jajodia},
+           familyi={J\bibinitperiod},
+           given={Sushil},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Boston, MA}%
+      }
+      \list{publisher}{1}{%
+        {Springer US}%
+      }
+      \strng{namehash}{27482d1bc784f4a2ae56e6e4d527aa5d}
+      \strng{fullhash}{27482d1bc784f4a2ae56e6e4d527aa5d}
+      \strng{bibnamehash}{27482d1bc784f4a2ae56e6e4d527aa5d}
+      \strng{authorbibnamehash}{27482d1bc784f4a2ae56e6e4d527aa5d}
+      \strng{authornamehash}{27482d1bc784f4a2ae56e6e4d527aa5d}
+      \strng{authorfullhash}{27482d1bc784f4a2ae56e6e4d527aa5d}
+      \strng{editorbibnamehash}{0cac39132f98f7b7a6c56009e805ed23}
+      \strng{editornamehash}{0cac39132f98f7b7a6c56009e805ed23}
+      \strng{editorfullhash}{0cac39132f98f7b7a6c56009e805ed23}
+      \field{labelalpha}{Sol11}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Generalized Mersenne Prime}
+      \field{year}{2011}
+      \field{pages}{509\bibrangedash 510}
+      \range{pages}{2}
+    \endentry
+    \entry{Soni2021}{inbook}{}
+      \name{author}{6}{}{%
+        {{un=0,uniquepart=base,hash=d39420937e952c5af4a169091d69dfe8}{%
+           family={Soni},
+           familyi={S\bibinitperiod},
+           given={Deepraj},
+           giveni={D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8b3ae2f815a716cd04b482c006ea14ca}{%
+           family={Basu},
+           familyi={B\bibinitperiod},
+           given={Kanad},
+           giveni={K\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=75b21e83083ae27ad1970057cfb20dfc}{%
+           family={Nabeel},
+           familyi={N\bibinitperiod},
+           given={Mohammed},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d437adcc2e3853a77987a4910ca60285}{%
+           family={Aaraj},
+           familyi={A\bibinitperiod},
+           given={Najwa},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=738725d59ea0a7e326211e4e28b01990}{%
+           family={Manzano},
+           familyi={M\bibinitperiod},
+           given={Marcos},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4d9e613e6d1d9dc241b7401fbc88b423}{%
+           family={Karri},
+           familyi={K\bibinitperiod},
+           given={Ramesh},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \list{location}{1}{%
+        {Cham}%
+      }
+      \list{publisher}{1}{%
+        {Springer International Publishing}%
+      }
+      \strng{namehash}{c16272024e17e681a4a1d280f4e7436d}
+      \strng{fullhash}{746baa634a18d9d57d88b3674448e961}
+      \strng{bibnamehash}{746baa634a18d9d57d88b3674448e961}
+      \strng{authorbibnamehash}{746baa634a18d9d57d88b3674448e961}
+      \strng{authornamehash}{c16272024e17e681a4a1d280f4e7436d}
+      \strng{authorfullhash}{746baa634a18d9d57d88b3674448e961}
+      \field{labelalpha}{Son+21}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{FALCON is a lattice-based cryptographic algorithm which claims to provide a signature scheme that is unforgeable against quantum-computers; it is the second such algorithm we consider in-depth, of the eight in this book. This algorithm is divided into three components: key generation, signature generation, and signature verification. We select three variants of FALCON with distinct security strength and make these variants capable of synthesis by a High-Level Synthesis (HLS) tool. We summarize all the changes in the C code to make it capable of synthesis. Using HLS, we generate FPGA and ASIC designs for signature verification of three variants. For FALCON hardware architectures, we evaluate trade-offs in power, area, speed, and security parameters. We explore the design-space through a detailed analysis of FPGA and ASIC designs for FALCON, concluding that for the FPGA implementation, latency increases with security while for the ASIC-specific implementation, loop pipelining improves the latency without any additional memory or area cost.}
+      \field{booktitle}{Hardware Architectures for Post-Quantum Digital Signature Schemes}
+      \field{isbn}{978-3-030-57682-0}
+      \field{title}{FALCON}
+      \field{year}{2021}
+      \field{pages}{31\bibrangedash 41}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.1007/978-3-030-57682-0_3
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/978-3-030-57682-0_3
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/978-3-030-57682-0_3
+      \endverb
+    \endentry
+    \entry{strassen}{article}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=7efe98d66546a2784eabf4c6a24eec59}{%
+           family={Schönhage},
+           familyi={S\bibinitperiod},
+           given={A.},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=c67d4845b860f9077e6c7af50a058632}{%
+           family={Strassen},
+           familyi={S\bibinitperiod},
+           given={V.},
+           giveni={V\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{3185ea5b27ca1ef5b4ff880e26625911}
+      \strng{fullhash}{3185ea5b27ca1ef5b4ff880e26625911}
+      \strng{bibnamehash}{3185ea5b27ca1ef5b4ff880e26625911}
+      \strng{authorbibnamehash}{3185ea5b27ca1ef5b4ff880e26625911}
+      \strng{authornamehash}{3185ea5b27ca1ef5b4ff880e26625911}
+      \strng{authorfullhash}{3185ea5b27ca1ef5b4ff880e26625911}
+      \field{labelalpha}{SS71}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Es wird ein Algorithmus zur Berechnung des Produktes von zweiN-stelligen Dualzahlen angegeben. Zwei Arten der Realisierung werden betrachtet: Turingmaschinen mit mehreren Bändern und logische Netze (aus zweistelligen logischen Elementen aufgebaut).}
+      \field{isbn}{1436-5057}
+      \field{journaltitle}{Computing}
+      \field{number}{3}
+      \field{title}{Schnelle Multiplikation gro{ß}er Zahlen}
+      \field{volume}{7}
+      \field{year}{1971}
+      \field{pages}{281\bibrangedash 292}
+      \range{pages}{12}
+      \verb{doi}
+      \verb 10.1007/BF02242355
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/BF02242355
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/BF02242355
+      \endverb
+      \warn{\item article entry 'strassen' (bibliography.bib): Invalid format '1971/09/01' of date field 'date' - ignoring}
+    \endentry
+    \entry{10.1007/978-3-030-57808-4_21}{inproceedings}{}
+      \name{author}{3}{}{%
+        {{un=0,uniquepart=base,hash=dc58cd6a24a023ce7177d8f199d47875}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Bin},
+           giveni={B\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=3b75046174e3bde80c30cb0ccf5788eb}{%
+           family={Gu},
+           familyi={G\bibinitperiod},
+           given={Xiaozhuo},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e3db906ce82f6734aa5ef78fe7ac8fe0}{%
+           family={Yang},
+           familyi={Y\bibinitperiod},
+           given={Yingshan},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+      }
+      \name{editor}{4}{}{%
+        {{hash=c1c6cc37d38b38f6ff327e1eabebda0c}{%
+           family={Conti},
+           familyi={C\bibinitperiod},
+           given={Mauro},
+           giveni={M\bibinitperiod}}}%
+        {{hash=269ca2371293161be4bc944482b509d7}{%
+           family={Zhou},
+           familyi={Z\bibinitperiod},
+           given={Jianying},
+           giveni={J\bibinitperiod}}}%
+        {{hash=2bf4f3a505e556d861349e65971197c8}{%
+           family={Casalicchio},
+           familyi={C\bibinitperiod},
+           given={Emiliano},
+           giveni={E\bibinitperiod}}}%
+        {{hash=dc8f4f054f37a19ffb4ef2ad0c165508}{%
+           family={Spognardi},
+           familyi={S\bibinitperiod},
+           given={Angelo},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cham}%
+      }
+      \list{publisher}{1}{%
+        {Springer International Publishing}%
+      }
+      \strng{namehash}{9ff3dd732ae3185fafe91cb8dfe6ea1c}
+      \strng{fullhash}{9ff3dd732ae3185fafe91cb8dfe6ea1c}
+      \strng{bibnamehash}{9ff3dd732ae3185fafe91cb8dfe6ea1c}
+      \strng{authorbibnamehash}{9ff3dd732ae3185fafe91cb8dfe6ea1c}
+      \strng{authornamehash}{9ff3dd732ae3185fafe91cb8dfe6ea1c}
+      \strng{authorfullhash}{9ff3dd732ae3185fafe91cb8dfe6ea1c}
+      \strng{editorbibnamehash}{412aa2ebe791293c3eea847ff44fe7b7}
+      \strng{editornamehash}{412aa2ebe791293c3eea847ff44fe7b7}
+      \strng{editorfullhash}{412aa2ebe791293c3eea847ff44fe7b7}
+      \field{labelalpha}{WGY20}
+      \field{sortinit}{W}
+      \field{sortinithash}{4315d78024d0cea9b57a0c6f0e35ed0d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Saber, a CCA-secure lattice-based post-quantum key encapsulation scheme, is one of the second round candidate algorithms in the post-quantum cryptography standardization process of the US National Institute of Standards and Technology (NIST) in 2019. In this work, we provide an efficient implementation of Saber on ESP32, an embedded microcontroller designed for IoT environment with WiFi and Bluetooth support. RSA coprocessor was used to speed up the polynomial multiplications for Kyber variant in a CHES 2019 paper. We propose an improved implementation utilizing the big integer coprocessor for the polynomial multiplications in Saber, which contains significant lower software overhead and takes a better advantage of the big integer coprocessor on ESP32. By using the fast implementation of polynomial multiplications, our single-core version implementation of Saber takes 1639K, 2123K, 2193K clock cycles on ESP32 for key generation, encapsulation and decapsulation respectively. Benefiting from the dual core feature on ESP32, we speed up the implementation of Saber by rearranging the computing steps and assigning proper tasks to two cores executing in parallel. Our dual-core version implementation takes 1176K, 1625K, 1514K clock cycles for key generation, encapsulation and decapsulation respectively.}
+      \field{booktitle}{Applied Cryptography and Network Security}
+      \field{isbn}{978-3-030-57808-4}
+      \field{title}{Saber on ESP32}
+      \field{year}{2020}
+      \field{pages}{421\bibrangedash 440}
+      \range{pages}{20}
+    \endentry
+  \enddatalist
+  \missing{HARVEY20091502}
+  \missing{KroneckerGrundzgeEA}
+  \missing{cryptoeprint:2013/866}
+  \missing{enwiki:1171895737}
+\endrefsection
+\endinput
+
